@@ -679,6 +679,207 @@ html.share-modal-open body {
   overflow: hidden;
 }
 
+/* ── discord profile modal ── */
+.discord-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 420;
+  display: grid;
+  place-items: center;
+  padding: max(20px, env(safe-area-inset-top)) 20px max(20px, env(safe-area-inset-bottom));
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+}
+
+.discord-modal[hidden] {
+  display: none !important;
+}
+
+.discord-modal.is-open {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.discord-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  border: none;
+  cursor: pointer;
+}
+
+.discord-modal__panel {
+  position: relative;
+  z-index: 1;
+  width: min(340px, calc(100vw - 32px));
+  border-radius: 12px;
+  overflow: hidden;
+  background: #111214;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.45);
+  transform: translateY(10px) scale(0.98);
+  transition: transform 0.22s var(--ease);
+}
+
+.discord-modal.is-open .discord-modal__panel {
+  transform: none;
+}
+
+.discord-modal__close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.35);
+  color: #dbdee1;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.discord-modal__close:hover,
+.discord-modal__close:focus-visible {
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  outline: none;
+}
+
+.discord-profile__banner {
+  height: 60px;
+  background: #80848e;
+}
+
+.discord-profile__body {
+  position: relative;
+  padding: 0 16px 16px;
+  background: #111214;
+}
+
+.discord-profile__avatar-wrap {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  margin-top: -40px;
+  margin-bottom: 12px;
+}
+
+.discord-profile__avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: 6px solid #111214;
+  background: #1e1f22;
+  object-fit: cover;
+}
+
+.discord-profile__status {
+  position: absolute;
+  right: 2px;
+  bottom: 2px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 4px solid #111214;
+  box-sizing: border-box;
+}
+
+.discord-profile__status--dnd {
+  background:
+    linear-gradient(#111214, #111214) center / 10px 3px no-repeat,
+    #f23f43;
+}
+
+.discord-profile__display {
+  margin: 0 0 4px;
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  color: #f2f3f5;
+}
+
+.discord-profile__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 8px;
+  margin-bottom: 14px;
+}
+
+.discord-profile__username {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #b5bac1;
+}
+
+.discord-profile__dot {
+  color: #4e5058;
+  font-size: 0.75rem;
+  line-height: 1;
+}
+
+.discord-profile__badges {
+  list-style: none;
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+}
+
+.discord-profile__badges li {
+  display: inline-flex;
+}
+
+.discord-profile__badges img {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+}
+
+.discord-profile__copy {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 36px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 8px;
+  background: #5865f2;
+  color: #fff;
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.discord-profile__copy:hover,
+.discord-profile__copy:focus-visible {
+  background: #4752c4;
+  outline: none;
+}
+
+.discord-profile__copy.is-done {
+  background: #248046;
+}
+
+html.discord-modal-open,
+html.discord-modal-open body {
+  overflow: hidden;
+}
+
 /* ── about page ── */
 .about-page {
   display: flex;

@@ -1325,6 +1325,9 @@
     const copyAction = document.getElementById("shareModalCopy");
     const qrImg = document.getElementById("shareModalQr");
     const urlLabel = document.getElementById("shareModalUrl");
+    const discordModal = document.getElementById("discordModal");
+    const discordClose = document.getElementById("discordModalClose");
+    const discordCopy = document.getElementById("discordModalCopy");
 
     async function copyText(value) {
       if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -1366,6 +1369,8 @@
 
     let open = false;
     let lastFocus = null;
+    let discordOpen = false;
+    let discordLastFocus = null;
 
     function setShareOpen(next) {
       if (!modal) return;
@@ -1398,15 +1403,72 @@
       if (lastFocus && typeof lastFocus.focus === "function") lastFocus.focus();
     }
 
+    function setDiscordOpen(next) {
+      if (!discordModal) return;
+      discordOpen = next;
+      if (next) {
+        discordLastFocus = document.activeElement;
+        discordModal.hidden = false;
+        discordModal.offsetHeight;
+        discordModal.classList.add("is-open");
+        document.documentElement.classList.add("discord-modal-open");
+        discordClose?.focus();
+        return;
+      }
+
+      discordModal.classList.remove("is-open");
+      document.documentElement.classList.remove("discord-modal-open");
+      const onEnd = (event) => {
+        if (event.target !== discordModal || event.propertyName !== "opacity") return;
+        discordModal.removeEventListener("transitionend", onEnd);
+        if (!discordOpen) discordModal.hidden = true;
+      };
+      discordModal.addEventListener("transitionend", onEnd);
+      window.setTimeout(() => {
+        if (!discordOpen) discordModal.hidden = true;
+      }, 250);
+      if (discordLastFocus && typeof discordLastFocus.focus === "function") {
+        discordLastFocus.focus();
+      }
+    }
+
     if (discordBtn) {
-      discordBtn.addEventListener("click", async () => {
+      discordBtn.setAttribute("aria-haspopup", "dialog");
+      discordBtn.setAttribute("aria-controls", "discordModal");
+      discordBtn.addEventListener("click", () => {
+        if (discordModal) {
+          setDiscordOpen(true);
+          return;
+        }
         const handle = discordBtn.getAttribute("data-discord") || "delexxo";
+        copyText(handle)
+          .then(() => flashStatus(`Copied Discord: ${handle}`, discordBtn))
+          .catch(() => flashStatus(handle, discordBtn));
+      });
+    }
+
+    if (discordModal) {
+      discordClose?.addEventListener("click", () => setDiscordOpen(false));
+      discordModal.querySelectorAll("[data-discord-close]").forEach((el) => {
+        el.addEventListener("click", () => setDiscordOpen(false));
+      });
+      discordCopy?.addEventListener("click", async () => {
+        const handle = discordBtn?.getAttribute("data-discord") || "delexxo";
         try {
           await copyText(handle);
+          discordCopy.textContent = "Copied!";
+          discordCopy.classList.add("is-done");
           flashStatus(`Copied Discord: ${handle}`, discordBtn);
+          window.setTimeout(() => {
+            discordCopy.textContent = "Copy username";
+            discordCopy.classList.remove("is-done");
+          }, 1400);
         } catch (_error) {
           flashStatus(handle, discordBtn);
         }
+      });
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape" && discordOpen) setDiscordOpen(false);
       });
     }
 
@@ -1427,16 +1489,12 @@
             await navigator.share(payload);
             return;
           }
+        } catch (_error) {}
+        try {
           await copyText(url);
           flashStatus("Link copied", shareBtn);
-        } catch (error) {
-          if (error && error.name === "AbortError") return;
-          try {
-            await copyText(url);
-            flashStatus("Link copied", shareBtn);
-          } catch (_error) {
-            flashStatus("Can't share", shareBtn);
-          }
+        } catch (_error) {
+          flashStatus(url, shareBtn);
         }
       });
     }

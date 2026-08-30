@@ -571,6 +571,61 @@
     </div>
   </div>
 
+  <div class="discord-modal" id="discordModal" hidden>
+    <div class="discord-modal__backdrop" data-discord-close tabindex="-1"></div>
+    <div
+      class="discord-modal__panel"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="discordModalTitle"
+    >
+      <button class="discord-modal__close" type="button" id="discordModalClose" aria-label="Close">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+      <article class="discord-profile">
+        <div class="discord-profile__banner" aria-hidden="true"></div>
+        <div class="discord-profile__body">
+          <div class="discord-profile__avatar-wrap">
+            <img
+              class="discord-profile__avatar"
+              src="doc/discordpfp.png"
+              alt=""
+              width="80"
+              height="80"
+              decoding="async"
+            >
+            <span class="discord-profile__status discord-profile__status--dnd" title="Do Not Disturb" aria-label="Do Not Disturb"></span>
+          </div>
+          <h2 class="discord-profile__display" id="discordModalTitle">delexo</h2>
+          <div class="discord-profile__row">
+            <span class="discord-profile__username">delexxo</span>
+            <span class="discord-profile__dot" aria-hidden="true">•</span>
+            <ul class="discord-profile__badges" aria-label="Discord badges">
+              <li>
+                <img src="doc/badge-hypesquad-bravery.png" alt="HypeSquad Bravery" title="HypeSquad Bravery" width="22" height="22" loading="lazy" decoding="async">
+              </li>
+              <li>
+                <img src="doc/badge-legacy-username.png" alt="Originally known as…" title="Originally known as…" width="22" height="22" loading="lazy" decoding="async">
+              </li>
+              <li>
+                <img src="doc/badge-orbs-apprentice.png" alt="Orbs — Apprentice" title="Orbs — Apprentice" width="22" height="22" loading="lazy" decoding="async">
+              </li>
+              <li>
+                <img src="doc/badge-quest-completed.png" alt="Completed a Quest" title="Completed a Quest" width="22" height="22" loading="lazy" decoding="async">
+              </li>
+              <li>
+                <img src="doc/badge-gifting-luminary.png" alt="Gifting Luminary" title="Gifting Luminary" width="22" height="22" loading="lazy" decoding="async">
+              </li>
+            </ul>
+          </div>
+          <button class="discord-profile__copy" type="button" id="discordModalCopy">
+            Copy username
+          </button>
+        </div>
+      </article>
+    </div>
+  </div>
+
   <script>
     window.DOC_BASE =
       "https://raw.githubusercontent.com/Delexoo/About-Me/refs/heads/main/doc/";
