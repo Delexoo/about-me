@@ -1,4 +1,4 @@
--- Canonical supporters leaderboard schema for project issnyfbepoqnpkrgowdl
+-- Canonical supporters leaderboard schema for project rvrrrcsveqpqnmzptxuj (Leaderboard)
 -- Safe to re-run. Used by: server.js, netlify/functions/*, browser REST fallback.
 
 create extension if not exists pgcrypto;
