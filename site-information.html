@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Site information for Delexo: privacy, terms, links, and supporters.">
+  <meta name="color-scheme" content="light">
+  <title>Site information | DELEXO</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,900,100,1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="scroll-indicator" id="scrollIndicator" aria-hidden="true">
+    <div class="scroll-indicator__track" id="scrollTrack">
+      <div class="scroll-indicator__thumb" id="scrollThumb"></div>
+    </div>
+  </div>
+  <div class="splash" id="splash" aria-hidden="true">
+    <div class="splash__grid" aria-hidden="true">
+      <span class="splash__dot"></span>
+      <span class="splash__dot"></span>
+      <span class="splash__dot"></span>
+      <span class="splash__dot"></span>
+      <span class="splash__dot"></span>
+      <span class="splash__dot"></span>
+      <span class="splash__dot"></span>
+      <span class="splash__dot"></span>
+      <span class="splash__dot"></span>
+    </div>
+  </div>
+
+  <header class="page-top">
+    <div class="page-wrap">
+      <a class="page-top__back text-link" href="index.html">← Home</a>
+      <h1 class="page-top__title">Site information</h1>
+      <p class="page-top__lead">Privacy, terms, links, and the full supporters leaderboard in one place.</p>
+    </div>
+  </header>
+
+  <main class="site-main site-main--page">
+    <div class="page-wrap">
+      <div class="site-info reveal">
+        <div class="site-info__tabs" role="tablist" aria-label="Site information tabs">
+          <button class="site-info__tab" type="button" role="tab" id="site-info-tab-privacy" aria-selected="true" aria-controls="site-info-panel-privacy">Privacy</button>
+          <button class="site-info__tab" type="button" role="tab" id="site-info-tab-terms" aria-selected="false" aria-controls="site-info-panel-terms" tabindex="-1">Terms</button>
+          <button class="site-info__tab" type="button" role="tab" id="site-info-tab-links" aria-selected="false" aria-controls="site-info-panel-links" tabindex="-1">All My Links</button>
+          <button class="site-info__tab" type="button" role="tab" id="site-info-tab-supporters" aria-selected="false" aria-controls="site-info-panel-supporters" tabindex="-1">Supporters</button>
+        </div>
+
+        <div class="site-info__panel" id="site-info-panel-privacy" role="tabpanel" aria-labelledby="site-info-tab-privacy">
+          <h3>Privacy</h3>
+          <p>I do not collect personal information for normal browsing on this website. There are no cookies used to identify you, no analytics or tracking scripts, and no advertising. I do not collect or sell your data.</p>
+          <p>If you donate to the <a href="index.html#supporters">Top Supporters</a> section, I collect <span class="site-info__tag">Donation amount</span>, <span class="site-info__tag">Email</span>, plus an optional <span class="site-info__tag">Name</span> and optional <span class="site-info__tag">Note</span>. This is used to process your donation and, if provided, display your name or note on the leaderboard.</p>
+          <p>If you open links to other sites, those services have their own privacy practices.</p>
+        </div>
+
+        <div class="site-info__panel" id="site-info-panel-terms" role="tabpanel" aria-labelledby="site-info-tab-terms" hidden>
+          <h3>Terms</h3>
+          <p>By using this site, you agree to these terms. The site is provided as-is, without warranties. I am not liable for damages arising from your use of the site or from third-party sites you visit through links here.</p>
+          <p>Products, courses, or payments you buy elsewhere are governed by the seller's or platform's terms, including Beacons, Stripe, or any other payment provider.</p>
+        </div>
+
+        <div class="site-info__panel" id="site-info-panel-links" role="tabpanel" aria-labelledby="site-info-tab-links" hidden>
+          <div class="site-info__links">
+            <a href="https://github.com/Delexoo/" target="_blank" rel="noopener noreferrer"><span>GitHub</span><span>github.com/Delexoo</span></a>
+            <a href="https://open.spotify.com/user/31dn6hrf3fbxdrfabi2wpqvwvaju?si=ScPuuAGlQ4SfhGS1hfzMMQ" target="_blank" rel="noopener noreferrer"><span>Spotify</span><span>Playlists</span></a>
+            <a href="https://account.venmo.com/u/onepoundcoins" target="_blank" rel="noopener noreferrer"><span>Venmo</span><span>@onepoundcoins</span></a>
+            <a href="https://cash.app/$vxqq" target="_blank" rel="noopener noreferrer"><span>Cash App</span><span>$vxqq</span></a>
+            <a href="https://freeuniversitytools.com/" target="_blank" rel="noopener noreferrer"><span>Free University Tools</span><span>freeuniversitytools.com</span></a>
+            <a href="https://www.serverly.store/" target="_blank" rel="noopener noreferrer"><span>Serverly</span><span>serverly.store</span></a>
+            <a href="https://namemc.com/profile/Delexo" target="_blank" rel="noopener noreferrer"><span>NameMC</span><span>@delexo</span></a>
+            <a href="index.html"><span>This site</span><span>Home</span></a>
+          </div>
+        </div>
+
+        <div class="site-info__panel" id="site-info-panel-supporters" role="tabpanel" aria-labelledby="site-info-tab-supporters" hidden>
+          <div class="site-info__panel-head">
+            <h3>Supporters</h3>
+            <a class="supporters__btn" href="index.html#supporters">Back to top supporters</a>
+          </div>
+          <div class="site-info__supporters-wrap">
+            <table class="site-info__supporters-table">
+              <thead>
+                <tr>
+                  <th scope="col">Rank</th>
+                  <th scope="col">Supporter</th>
+                  <th scope="col" class="site-info__supporters-note-col">Note</th>
+                  <th scope="col">Support</th>
+                </tr>
+              </thead>
+              <tbody id="siteInfoSupporters">
+                <tr>
+                  <td>–</td>
+                  <td colspan="3">Open this tab to load supporters.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <p class="site-info__updated">Last updated: April 13, 2026</p>
+      </div>
+    </div>
+  </main>
+
+  <a class="site-fixed-link" href="apply.html">Work For Me!</a>
+
+  <nav class="site-dock" aria-label="Quick links">
+    <a href="index.html#supporters">Donate</a>
+    <span class="site-bar__sep" aria-hidden="true">•</span>
+    <a href="apply.html">Work For Me!</a>
+    <span class="site-bar__sep" aria-hidden="true">•</span>
+    <a href="site-information.html#privacy">Privacy</a>
+    <span class="site-bar__sep" aria-hidden="true">•</span>
+    <a href="site-information.html#terms">Terms</a>
+  </nav>
+
+  <script>
+    window.SUPPORTERS_API_BASE =
+      (location.hostname === "localhost" || location.hostname === "127.0.0.1") &&
+      location.port === "3000"
+        ? ""
+        : "https://support-leaderboard-backend.onrender.com";
+    window.SUPABASE_URL = "https://skawqfnivaxbcfjlyekl.supabase.co";
+    window.SUPABASE_ANON_KEY =
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNrYXdxZm5pdmF4YmNmamx5ZWtsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM0NjM5NzgsImV4cCI6MjA5OTAzOTk3OH0.nORZaQmdxP8nFSltmGq9M0GsnxB1kjNphXjw1KkBEug";
+  </script>
+  <script src="js/app.js"></script>
+</body>
+</html>

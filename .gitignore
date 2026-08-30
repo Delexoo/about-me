@@ -1,0 +1,16 @@
+node_modules/
+.netlify/
+.vscode/
+.env
+.env.*
+.env.local
+.env.*.local
+*.pem
+*.p12
+essential variables.txt
+[Ee]ssential variables.txt
+render-env.txt
+supabase/.temp/
+Thumbs.db
+Desktop.ini
+.DS_Store
