@@ -61,9 +61,10 @@ function mustEnv(name) {
 
 function stripeServer() {
   const key = mustEnv("STRIPE_SECRET_KEY");
-  if (!/^sk_(test|live)_/.test(key)) {
+  // sk_* = secret key, rk_* = restricted key (must allow Checkout Sessions + Prices)
+  if (!/^(sk|rk)_(test|live)_/.test(key)) {
     throw new Error(
-      "STRIPE_SECRET_KEY must be a real sk_test_ or sk_live_ key from Stripe Dashboard → Developers → API keys"
+      "STRIPE_SECRET_KEY must be an sk_test_/sk_live_ or rk_test_/rk_live_ key from Stripe Dashboard → Developers → API keys"
     );
   }
   return new Stripe(key, { apiVersion: "2024-06-20" });
