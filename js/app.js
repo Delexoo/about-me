@@ -193,6 +193,8 @@
 
   function markActiveNav() {
     const path = window.location.pathname.split("/").pop() || "index.html";
+    const hash = (window.location.hash || "").replace(/^#/, "");
+
     document.querySelectorAll("[data-nav]").forEach((link) => {
       const target = link.getAttribute("data-nav");
       const isHome = path === "" || path === "index.html";
@@ -201,6 +203,16 @@
         (target !== "home" && path === target + ".html");
       link.classList.toggle("is-active", active);
     });
+
+    if (path === "site-information.html") {
+      document.querySelectorAll("[data-nav-hash]").forEach((link) => {
+        const target = link.getAttribute("data-nav-hash");
+        const active = hash === target || (!hash && target === "privacy");
+        link.classList.toggle("is-active", active);
+        if (active) link.setAttribute("aria-current", "page");
+        else link.removeAttribute("aria-current");
+      });
+    }
   }
 
   function applyNavProximity(group, index) {
@@ -328,13 +340,6 @@
       .filter(Boolean);
     const contentSections = sections.filter((section) => section.id !== "top");
     const menuLabel = document.getElementById("navMenuLabel");
-    const sectionLabels = {
-      top: "Home",
-      projects: "Projects",
-      courses: "Courses",
-      journey: "Journey",
-      supporters: "Supporters",
-    };
     const mobileMq = window.matchMedia("(max-width: 768px)");
 
     if (!sections.length) return;
@@ -359,9 +364,7 @@
       links.forEach((link) => {
         link.classList.toggle("is-active", link.dataset.section === id);
       });
-      if (menuLabel && mobileMq.matches) {
-        menuLabel.textContent = sectionLabels[id] || "Menu";
-      } else if (menuLabel) {
+      if (menuLabel) {
         menuLabel.textContent = "Menu";
       }
     }

@@ -43,35 +43,244 @@
     <div class="page-wrap">
       <div class="site-info reveal">
         <div class="site-info__tabs" role="tablist" aria-label="Site information tabs">
-          <button class="site-info__tab" type="button" role="tab" id="site-info-tab-privacy" aria-selected="true" aria-controls="site-info-panel-privacy">Privacy</button>
+          <button class="site-info__tab" type="button" role="tab" id="site-info-tab-privacy" aria-selected="true" aria-controls="site-info-panel-privacy">Priv</button>
           <button class="site-info__tab" type="button" role="tab" id="site-info-tab-terms" aria-selected="false" aria-controls="site-info-panel-terms" tabindex="-1">Terms</button>
           <button class="site-info__tab" type="button" role="tab" id="site-info-tab-links" aria-selected="false" aria-controls="site-info-panel-links" tabindex="-1">All My Links</button>
           <button class="site-info__tab" type="button" role="tab" id="site-info-tab-supporters" aria-selected="false" aria-controls="site-info-panel-supporters" tabindex="-1">Supporters</button>
         </div>
 
         <div class="site-info__panel" id="site-info-panel-privacy" role="tabpanel" aria-labelledby="site-info-tab-privacy">
-          <h3>Privacy</h3>
-          <p>I do not collect personal information for normal browsing on this website. There are no cookies used to identify you, no analytics or tracking scripts, and no advertising. I do not collect or sell your data.</p>
-          <p>If you donate to the <a href="index.html#supporters">Top Supporters</a> section, I collect <span class="site-info__tag">Donation amount</span>, <span class="site-info__tag">Email</span>, plus an optional <span class="site-info__tag">Name</span> and optional <span class="site-info__tag">Note</span>. This is used to process your donation and, if provided, display your name or note on the leaderboard.</p>
-          <p>If you open links to other sites, those services have their own privacy practices.</p>
+          <div class="site-info__legal">
+            <h3>Privacy Policy</h3>
+            <p>This Privacy Policy explains how Delexo (“I,” “me,” or “the site”) handles information when you visit <a href="https://delexo.store">delexo.store</a> and related pages (including About, Apply / Work For Me, and Site information). Please read it carefully. By using the site, you acknowledge this policy.</p>
+            <p><strong>Effective / last updated:</strong> August 30, 2026.</p>
+
+            <h4>1. Who this applies to</h4>
+            <p>This policy covers visitors, supporters who donate or tip, people who save a public note on the supporters leaderboard, and anyone who opens pages, forms, or links hosted on or linked from this site. It does not cover third-party websites, apps, or payment processors you leave this site to use — those have their own policies.</p>
+
+            <h4>2. What I do not do for ordinary browsing</h4>
+            <p>For normal reading and navigation of this website:</p>
+            <ul>
+              <li>I do not require an account or login.</li>
+              <li>I do not run advertising networks or sell your personal data.</li>
+              <li>I do not place third-party marketing cookies or analytics trackers (for example Google Analytics, Meta Pixel, or similar) on this site for identifying you.</li>
+              <li>I do not build marketing profiles from ordinary page views on this site alone.</li>
+            </ul>
+            <p>Your browser and hosting provider may still process technical connection data (such as IP address and request headers) as part of delivering the page. That is standard internet infrastructure, not a feature I use to profile you.</p>
+
+            <h4>3. Information you may provide voluntarily</h4>
+            <p>Some features only work if you choose to send information:</p>
+            <ul>
+              <li><span class="site-info__tag">Display name</span> — optional public name shown on the <a href="index.html#supporters">Top Supporters</a> leaderboard (length limited on the form).</li>
+              <li><span class="site-info__tag">Note</span> — optional public message shown with your supporter entry (length limited on the form).</li>
+              <li><span class="site-info__tag">Social / profile URL</span> — if you attach one, it may be shown as a link next to your name on the leaderboard.</li>
+              <li><span class="site-info__tag">Donation amount</span> — the amount you choose when tipping or donating.</li>
+              <li><span class="site-info__tag">Email and payment details</span> — collected and processed by Stripe (or another payment provider you use, such as Venmo or Cash App) to complete the payment. I do not store full card numbers on this website.</li>
+              <li><span class="site-info__tag">Application details</span> — if you apply via the Work For Me / Apply flow (for example through Tally or similar), that form provider receives whatever fields you submit.</li>
+            </ul>
+            <p>Do not submit information you are not comfortable making public when a field is described as public (name, note, social URL).</p>
+
+            <h4>4. How donations and the leaderboard work</h4>
+            <p>When you use the on-site supporters / donate flow:</p>
+            <ol>
+              <li>Checkout is typically handled by Stripe. Stripe processes payment information under Stripe’s own privacy policy and terms.</li>
+              <li>A backend service (currently hosted on Render) may receive payment confirmation (for example via webhook) and update supporter totals.</li>
+              <li>Leaderboard data is stored in a database (currently Supabase). Public leaderboard reads are limited to fields needed for display — typically display name, note, total support amount, and social URL for entries with a positive total.</li>
+              <li>Email and sensitive payment data are not exposed on the public leaderboard through the site’s public read path.</li>
+            </ol>
+            <p>Tips or donations sent through Venmo, Cash App, or a Stripe Payment Link outside the on-site form may not automatically appear on the leaderboard unless they are matched and recorded separately.</p>
+
+            <h4>5. Information stored in your browser</h4>
+            <p>The site may use your browser’s <span class="site-info__tag">localStorage</span> (or similar local storage) for small, site-only preferences, for example:</p>
+            <ul>
+              <li>Remembering a display name you previously used for the supporters form.</li>
+              <li>Remembering whether you liked or disliked the home comment UI.</li>
+              <li>Remembering whether you have already seen a brief splash or intro animation.</li>
+            </ul>
+            <p>This data stays on your device unless you clear site data. It is not used to track you across other websites.</p>
+
+            <h4>6. Third-party services and outbound links</h4>
+            <p>This site links to and may load assets from third parties, including but not limited to:</p>
+            <ul>
+              <li>Stripe (payments and tips)</li>
+              <li>Supabase (leaderboard database)</li>
+              <li>Render (API / backend for supporters)</li>
+              <li>GitHub / GitHub Pages or raw content (hosting, images, project links)</li>
+              <li>Beacons (courses and Capes++ shop)</li>
+              <li>Tally (applications)</li>
+              <li>Google Fonts and icon / favicon CDNs</li>
+              <li>Social and product sites: Instagram, Discord, GitHub, Spotify, Telegram, NameMC, GD Browser, Venmo, Cash App, and project domains such as freeuniversitytools.com and serverly.store</li>
+            </ul>
+            <p>When you click those links or load those resources, the third party may collect data according to their own privacy practices. I am not responsible for their policies or practices.</p>
+
+            <h4>7. How information is used</h4>
+            <p>Information is used only as needed to:</p>
+            <ul>
+              <li>Operate and display the website and supporters leaderboard.</li>
+              <li>Process tips and donations and acknowledge support.</li>
+              <li>Respond to applications or messages you send.</li>
+              <li>Maintain security, prevent abuse, and fix technical issues.</li>
+              <li>Comply with law if legally required.</li>
+            </ul>
+            <p>I do not sell personal information. I do not rent or trade supporter lists for advertising.</p>
+
+            <h4>8. Public content and visibility</h4>
+            <p>Anything you submit for public display (supporter name, note, social URL, and aggregate support amount) can be seen by anyone who views the leaderboard or related pages. Assume public fields are public worldwide. Do not include private contact details, passwords, or sensitive personal data in notes.</p>
+
+            <h4>9. Retention</h4>
+            <p>Leaderboard and donation-related records are kept while useful to operate the supporters feature and maintain accurate totals, unless you request deletion where feasible. Browser localStorage remains until you clear it. Payment providers retain records according to their own retention rules and legal obligations (for example tax and fraud prevention).</p>
+
+            <h4>10. Security</h4>
+            <p>I take reasonable steps to protect systems that store supporter data (access controls, restricted public database reads, secrets kept off the public site). No method of transmission or storage is completely secure. You use the site and payment providers at your own risk regarding residual security risk.</p>
+
+            <h4>11. Children</h4>
+            <p>This site is not directed at children under 13 (or the minimum age required in your country). Do not donate, tip, or submit personal information if you are under the applicable age without appropriate parental / guardian involvement as required by law. If you believe a child has submitted personal information, contact me so it can be reviewed and removed where appropriate.</p>
+
+            <h4>12. International visitors</h4>
+            <p>The site may be hosted and processed in the United States or other countries. If you access it from elsewhere, your information may be transferred to and processed in those locations, which may have different data-protection laws than your home country.</p>
+
+            <h4>13. Your choices and requests</h4>
+            <p>Depending on where you live, you may have rights to access, correct, or delete personal information I hold about you, or to object to certain processing. For public supporter entries, you can often update your note through the site tools when available. For other requests (for example removing a name from the leaderboard), contact me with enough detail to locate the entry. I may need to verify the request relates to you. Payment disputes and card data requests should go to Stripe or the payment method you used.</p>
+
+            <h4>14. Do Not Track and similar signals</h4>
+            <p>Because this site does not use advertising trackers for ordinary browsing, there is little additional action taken in response to browser “Do Not Track” signals beyond the practices already described here.</p>
+
+            <h4>15. Changes to this policy</h4>
+            <p>I may update this Privacy Policy from time to time. The “last updated” date at the top (and on this page) will change when material updates are published. Continued use of the site after changes means you accept the updated policy, to the extent permitted by law.</p>
+
+            <h4>16. Contact</h4>
+            <p>Privacy questions or data requests: reach out via Telegram <a href="https://t.me/delexoo" target="_blank" rel="noopener noreferrer">@delexoo</a>, Instagram <a href="https://www.instagram.com/delexooo/" target="_blank" rel="noopener noreferrer">@delexooo</a>, or Discord username <strong>delexxo</strong> (copy from the home quick links). Include “Privacy” in your message.</p>
+          </div>
         </div>
 
         <div class="site-info__panel" id="site-info-panel-terms" role="tabpanel" aria-labelledby="site-info-tab-terms" hidden>
-          <h3>Terms</h3>
-          <p>By using this site, you agree to these terms. The site is provided as-is, without warranties. I am not liable for damages arising from your use of the site or from third-party sites you visit through links here.</p>
-          <p>Products, courses, or payments you buy elsewhere are governed by the seller's or platform's terms, including Beacons, Stripe, or any other payment provider.</p>
+          <div class="site-info__legal">
+            <h3>Terms of Use</h3>
+            <p>These Terms of Use (“Terms”) govern your access to and use of <a href="https://delexo.store">delexo.store</a> and related pages operated by Delexo. By accessing or using the site, you agree to these Terms. If you do not agree, do not use the site.</p>
+            <p><strong>Effective / last updated:</strong> August 30, 2026.</p>
+
+            <h4>1. The site</h4>
+            <p>This website is a personal portfolio and information hub. It may include project links, journey content, courses links, an about page, an apply / work-with-me flow, tip and donation tools, and a supporters leaderboard. Features may change, move, or be removed at any time without notice.</p>
+
+            <h4>2. Eligibility</h4>
+            <p>You must be able to form a binding agreement under applicable law to use paid features (donations, tips, course purchases, applications). If you are under the age of majority where you live, you may browse only with permission of a parent or guardian where required, and you must not make payments without that permission.</p>
+
+            <h4>3. Acceptable use</h4>
+            <p>You agree not to:</p>
+            <ul>
+              <li>Use the site for unlawful, harmful, fraudulent, or abusive purposes.</li>
+              <li>Attempt to break, overload, scrape aggressively, reverse engineer, or bypass security or rate limits of the site, API, or database.</li>
+              <li>Submit malware, spam, harassment, hate, sexual content involving minors, doxxing, threats, or content that infringes others’ rights.</li>
+              <li>Impersonate others on the leaderboard or in applications.</li>
+              <li>Use automated bots to manipulate donations, rankings, or forms.</li>
+              <li>Misuse payment flows (chargebacks in bad faith, stolen payment methods, etc.).</li>
+            </ul>
+            <p>I may remove content, ignore submissions, or block access if these rules are broken.</p>
+
+            <h4>4. Intellectual property</h4>
+            <p>Unless otherwise stated, the site’s original design, text, layout, branding (including “Delexo” as used here), and original media are owned by Delexo or used with permission. You may view and share links to pages for personal, non-commercial purposes. You may not copy the site wholesale, republish substantial content as your own, or use branding in a way that suggests endorsement without permission.</p>
+            <p>Third-party marks (for example Stripe, GitHub, Beacons, Instagram) belong to their owners. Project repositories and products linked from the site may have their own licenses (including open-source licenses on GitHub).</p>
+
+            <h4>5. User-submitted content (notes, names, applications)</h4>
+            <p>If you submit a display name, note, social URL, application answers, or similar content, you grant Delexo a worldwide, non-exclusive, royalty-free license to host, display, reproduce, and moderate that content in connection with operating the site and leaderboard. You represent that you have the right to submit it and that it does not violate law or others’ rights.</p>
+            <p>I may edit, hide, or delete submissions (including notes that are spammy, offensive, misleading, or too long) at my discretion.</p>
+
+            <h4>6. Donations, tips, and the leaderboard</h4>
+            <ul>
+              <li>Tips and donations are voluntary. Unless a specific campaign states otherwise in writing, they are generally non-refundable once processed, except where required by law or by the payment provider’s rules.</li>
+              <li>Amounts shown on the leaderboard reflect recorded support totals and may lag, exclude off-platform tips, or be adjusted to correct errors or abuse.</li>
+              <li>Leaderboard ranking is a courtesy feature, not a contest with guaranteed prizes unless expressly advertised as such.</li>
+              <li>Payment processing is performed by third parties (for example Stripe, Venmo, Cash App). Their fees, currency conversion, holds, and dispute processes apply.</li>
+              <li>You are responsible for any taxes that apply to your payments in your jurisdiction.</li>
+            </ul>
+
+            <h4>7. Courses, Capes++, shops, and other products</h4>
+            <p>Courses, Capes++, and similar offers are often sold through third-party storefronts such as Beacons. Purchases on those platforms are contracts between you and that platform / seller under their terms, refund policies, and delivery rules — not under a separate warranty from this portfolio site unless explicitly stated in writing on a purchase page.</p>
+
+            <h4>8. Projects and third-party software</h4>
+            <p>Links to projects (for example Free University Tools, Serverly, Beats, GitReplay, Vanta, Vencord forks, Capes++) may point to separate sites or repositories. Those projects may be experimental, incomplete, or community-maintained. Use of Discord client mods or similar tools may violate third-party terms of service (for example Discord’s); you assume that risk. This site does not guarantee uptime, support, or fitness for a particular purpose for linked projects.</p>
+
+            <h4>9. Work For Me / Apply</h4>
+            <p>Submitting an application does not create an employment, contractor, or agency relationship. I may accept, decline, or ignore applications without explanation. Any paid work is governed by a separate agreement if and when one is made.</p>
+
+            <h4>10. Third-party links and embeds</h4>
+            <p>The site contains links to external websites and may load third-party fonts, icons, or images. I do not control and am not responsible for third-party content, availability, privacy practices, or damages arising from your use of those services.</p>
+
+            <h4>11. Disclaimer of warranties</h4>
+            <p>THE SITE AND ALL CONTENT AND FEATURES ARE PROVIDED “AS IS” AND “AS AVAILABLE,” WITHOUT WARRANTIES OF ANY KIND, WHETHER EXPRESS, IMPLIED, OR STATUTORY, INCLUDING IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, TITLE, AND NON-INFRINGEMENT. I DO NOT WARRANT THAT THE SITE WILL BE UNINTERRUPTED, ERROR-FREE, SECURE, OR FREE OF HARMFUL COMPONENTS.</p>
+
+            <h4>12. Limitation of liability</h4>
+            <p>TO THE MAXIMUM EXTENT PERMITTED BY LAW, DELEXO WILL NOT BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, EXEMPLARY, OR PUNITIVE DAMAGES, OR ANY LOSS OF PROFITS, DATA, GOODWILL, OR OTHER INTANGIBLE LOSSES, ARISING FROM OR RELATED TO YOUR USE OF (OR INABILITY TO USE) THE SITE, DONATIONS, THIRD-PARTY LINKS, OR LEADERBOARD FEATURES — WHETHER BASED ON WARRANTY, CONTRACT, TORT (INCLUDING NEGLIGENCE), OR ANY OTHER LEGAL THEORY — EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.</p>
+            <p>TO THE MAXIMUM EXTENT PERMITTED BY LAW, TOTAL LIABILITY FOR ANY CLAIM ARISING OUT OF THESE TERMS OR THE SITE IS LIMITED TO THE GREATER OF (A) THE AMOUNT YOU PAID DIRECTLY TO DELEXO THROUGH THE SITE’S DONATION FLOW IN THE TWELVE (12) MONTHS BEFORE THE CLAIM, OR (B) USD $50.</p>
+            <p>Some jurisdictions do not allow certain limitations; in those places, liability is limited to the fullest extent allowed.</p>
+
+            <h4>13. Indemnity</h4>
+            <p>You agree to defend, indemnify, and hold harmless Delexo from claims, damages, losses, and expenses (including reasonable legal fees) arising from your misuse of the site, your submitted content, your violation of these Terms, or your violation of any law or third-party right.</p>
+
+            <h4>14. Copyright complaints</h4>
+            <p>If you believe content on this site infringes your copyright, contact me with: (a) your contact information, (b) a description of the work, (c) the URL of the allegedly infringing material, (d) a statement of good-faith belief that use is unauthorized, and (e) a statement under penalty of perjury that the information is accurate and that you are the owner or authorized to act. I may remove or disable access to material in response.</p>
+
+            <h4>15. Suspension and termination</h4>
+            <p>I may suspend or terminate access to features (including removing leaderboard entries or ignoring applications) at any time for conduct that violates these Terms or harms the site or others. Provisions that by nature should survive (including disclaimers, limitations, and indemnity) survive termination.</p>
+
+            <h4>16. Changes to the Terms</h4>
+            <p>I may update these Terms periodically. The last-updated date will change when updates are posted. Continued use after changes constitutes acceptance of the revised Terms where permitted by law.</p>
+
+            <h4>17. Severability and entire agreement</h4>
+            <p>If any provision of these Terms is held unenforceable, the remaining provisions remain in effect. These Terms, together with the Privacy Policy, are the entire agreement between you and Delexo regarding the site, unless a separate written agreement applies to specific paid work or a specific product purchase on another platform.</p>
+
+            <h4>18. Governing law</h4>
+            <p>These Terms are governed by the laws of the jurisdiction in which Delexo resides, without regard to conflict-of-law rules, except where mandatory consumer protections in your country require otherwise. Courts in that jurisdiction may have exclusive venue for disputes, subject to those mandatory protections.</p>
+
+            <h4>19. Contact</h4>
+            <p>Questions about these Terms: Telegram <a href="https://t.me/delexoo" target="_blank" rel="noopener noreferrer">@delexoo</a>, Instagram <a href="https://www.instagram.com/delexooo/" target="_blank" rel="noopener noreferrer">@delexooo</a>, or Discord <strong>delexxo</strong>. Include “Terms” in your message.</p>
+          </div>
         </div>
 
         <div class="site-info__panel" id="site-info-panel-links" role="tabpanel" aria-labelledby="site-info-tab-links" hidden>
-          <div class="site-info__links">
-            <a href="https://github.com/Delexoo/" target="_blank" rel="noopener noreferrer"><span>GitHub</span><span>github.com/Delexoo</span></a>
-            <a href="https://open.spotify.com/user/31dn6hrf3fbxdrfabi2wpqvwvaju?si=ScPuuAGlQ4SfhGS1hfzMMQ" target="_blank" rel="noopener noreferrer"><span>Spotify</span><span>Playlists</span></a>
-            <a href="https://account.venmo.com/u/onepoundcoins" target="_blank" rel="noopener noreferrer"><span>Venmo</span><span>@onepoundcoins</span></a>
-            <a href="https://cash.app/$vxqq" target="_blank" rel="noopener noreferrer"><span>Cash App</span><span>$vxqq</span></a>
-            <a href="https://freeuniversitytools.com/" target="_blank" rel="noopener noreferrer"><span>Free University Tools</span><span>freeuniversitytools.com</span></a>
-            <a href="https://www.serverly.store/" target="_blank" rel="noopener noreferrer"><span>Serverly</span><span>serverly.store</span></a>
-            <a href="https://namemc.com/profile/Delexo" target="_blank" rel="noopener noreferrer"><span>NameMC</span><span>@delexo</span></a>
-            <a href="index.html"><span>This site</span><span>Home</span></a>
+          <div class="site-info__links-group">
+            <p class="site-info__links-label">Social</p>
+            <div class="site-info__links">
+              <a href="https://www.instagram.com/delexooo/" target="_blank" rel="noopener noreferrer"><span>Instagram</span><span>@delexooo</span></a>
+              <a href="https://github.com/Delexoo/" target="_blank" rel="noopener noreferrer"><span>GitHub</span><span>github.com/Delexoo</span></a>
+              <a href="https://open.spotify.com/user/31dn6hrf3fbxdrfabi2wpqvwvaju" target="_blank" rel="noopener noreferrer"><span>Spotify</span><span>Profile</span></a>
+              <a href="https://t.me/delexoo" target="_blank" rel="noopener noreferrer"><span>Telegram</span><span>@delexoo</span></a>
+              <a href="https://namemc.com/profile/Delexo" target="_blank" rel="noopener noreferrer"><span>NameMC</span><span>@delexo</span></a>
+              <a href="https://gdbrowser.com/u/vans" target="_blank" rel="noopener noreferrer"><span>GD Browser</span><span>@Vans</span></a>
+              <a href="index.html" title="Copy username from home quick links"><span>Discord</span><span>delexxo</span></a>
+            </div>
+          </div>
+          <div class="site-info__links-group">
+            <p class="site-info__links-label">Support</p>
+            <div class="site-info__links">
+              <a href="https://account.venmo.com/u/onepoundcoins" target="_blank" rel="noopener noreferrer"><span>Venmo</span><span>@onepoundcoins</span></a>
+              <a href="https://cash.app/$VXQQ" target="_blank" rel="noopener noreferrer"><span>Cash App</span><span>$VXQQ</span></a>
+              <a href="https://buy.stripe.com/4gMaEW87U7IO8C8azDcjS01" target="_blank" rel="noopener noreferrer"><span>Tip Me</span><span>Stripe</span></a>
+              <a href="index.html#supporters"><span>Supporters</span><span>Leaderboard</span></a>
+            </div>
+          </div>
+          <div class="site-info__links-group">
+            <p class="site-info__links-label">Projects</p>
+            <div class="site-info__links">
+              <a href="https://freeuniversitytools.com/" target="_blank" rel="noopener noreferrer"><span>Free University Tools</span><span>freeuniversitytools.com</span></a>
+              <a href="https://www.serverly.store/" target="_blank" rel="noopener noreferrer"><span>Serverly</span><span>serverly.store</span></a>
+              <a href="https://delexoo.github.io/beats/" target="_blank" rel="noopener noreferrer"><span>Beats</span><span>Player</span></a>
+              <a href="https://delexoo.github.io/GitReplay/" target="_blank" rel="noopener noreferrer"><span>GitReplay</span><span>Git history</span></a>
+              <a href="https://shop.beacons.ai/delexo/3f484dc8-435a-4a40-9be2-57b53c493c30" target="_blank" rel="noopener noreferrer"><span>Capes++</span><span>Shop</span></a>
+              <a href="https://delexoo.github.io/vanta/" target="_blank" rel="noopener noreferrer"><span>Vanta</span><span>Tools</span></a>
+              <a href="https://github.com/Delexoo/Vencord" target="_blank" rel="noopener noreferrer"><span>Vencord</span><span>GitHub</span></a>
+            </div>
+          </div>
+          <div class="site-info__links-group">
+            <p class="site-info__links-label">This site</p>
+            <div class="site-info__links">
+              <a href="index.html"><span>Home</span><span>delexo.store</span></a>
+              <a href="about.html"><span>About</span><span>Profile</span></a>
+              <a href="apply.html"><span>Work For Me!</span><span>Apply</span></a>
+              <a href="index.html#courses"><span>Courses</span><span>Beacons</span></a>
+              <a href="site-information.html#privacy"><span>Privacy</span><span>Policy</span></a>
+              <a href="site-information.html#terms"><span>Terms</span><span>Of use</span></a>
+            </div>
           </div>
         </div>
 
@@ -100,21 +309,28 @@
           </div>
         </div>
 
-        <p class="site-info__updated">Last updated: April 13, 2026</p>
+        <p class="site-info__updated">Last updated: August 30, 2026</p>
       </div>
     </div>
   </main>
 
-  <a class="site-fixed-link" href="apply.html">Work For Me!</a>
-
-  <nav class="site-dock" aria-label="Quick links">
-    <a href="index.html#supporters">Donate</a>
-    <span class="site-bar__sep" aria-hidden="true">•</span>
-    <a href="apply.html">Work For Me!</a>
-    <span class="site-bar__sep" aria-hidden="true">•</span>
-    <a href="site-information.html#privacy">Privacy</a>
-    <span class="site-bar__sep" aria-hidden="true">•</span>
-    <a href="site-information.html#terms">Terms</a>
+  <nav class="hero__links nav-proximity nav-stagger" id="siteNav" aria-label="Site navigation">
+    <button class="nav-menu-toggle" type="button" id="navMenuToggle" aria-expanded="false" aria-controls="navMenuPanel">
+      <span class="nav-menu-toggle__label" id="navMenuLabel">Menu</span>
+      <span class="nav-menu-toggle__icon" aria-hidden="true"></span>
+    </button>
+    <div class="nav-menu-panel" id="navMenuPanel">
+      <a class="nav-link" href="index.html">Home</a>
+      <a class="nav-link" href="index.html#projects">Projects</a>
+      <a class="nav-link" href="index.html#journey">Journey</a>
+      <a class="nav-link" href="index.html#courses">Courses</a>
+      <a class="nav-link" href="index.html#supporters">Supporters</a>
+      <span class="nav-divider" aria-hidden="true"></span>
+      <a class="nav-link" href="index.html#supporters">Donate</a>
+      <a class="nav-link" href="apply.html">Work For Me!</a>
+      <a class="nav-link" href="site-information.html#privacy" data-nav-hash="privacy">Privacy</a>
+      <a class="nav-link" href="site-information.html#terms" data-nav-hash="terms">Terms</a>
+    </div>
   </nav>
 
   <script>
