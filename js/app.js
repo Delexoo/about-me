@@ -10,7 +10,10 @@
 
   function supabasePublicConfig() {
     const url = (window.SUPABASE_URL || "").replace(/\/+$/, "");
-    const key = window.SUPABASE_ANON_KEY || "";
+    const key =
+      window.SUPABASE_ANON_KEY ||
+      window.SUPABASE_PUBLISHABLE_KEY ||
+      "";
     return url && key ? { url, key } : null;
   }
 

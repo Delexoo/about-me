@@ -1,14 +1,21 @@
--- Public leaderboard reads from the browser (anon key).
--- Run once in Supabase → SQL Editor.
+-- Public leaderboard reads (browser anon / publishable key).
+-- Revokes write access; selects only display fields for paid supporters.
 
-alter table supporters enable row level security;
+revoke all on table public.supporters from anon, authenticated;
+revoke all on table public.donations from anon, authenticated;
 
-revoke all on table supporters from anon;
-grant select (display_name, note, total_cents, social_url) on table supporters to anon;
+grant select (display_name, note, total_cents, social_url)
+  on table public.supporters to anon, authenticated;
 
-drop policy if exists "leaderboard_public_read" on supporters;
+grant all on table public.supporters to service_role;
+grant all on table public.donations to service_role;
+
+alter table public.supporters enable row level security;
+alter table public.donations enable row level security;
+
+drop policy if exists "leaderboard_public_read" on public.supporters;
 create policy "leaderboard_public_read"
-  on supporters
+  on public.supporters
   for select
-  to anon
+  to anon, authenticated
   using (total_cents > 0);
