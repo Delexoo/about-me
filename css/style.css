@@ -944,10 +944,11 @@ html.share-modal-open body {
 
 .about-page__quote {
   margin: 0;
-  padding: 4px 0 0 16px;
+  padding: 2px 0 0 16px;
   border: none;
   border-left: 2px solid rgba(0, 0, 0, 0.14);
   background: transparent;
+  max-width: 42ch;
 }
 
 .about-page__quote p {
