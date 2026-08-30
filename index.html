@@ -585,21 +585,27 @@
       <article class="discord-profile">
         <div class="discord-profile__banner" aria-hidden="true"></div>
         <div class="discord-profile__body">
-          <div class="discord-profile__avatar-wrap">
-            <img
-              class="discord-profile__avatar"
-              src="doc/discordpfp.png"
-              alt=""
-              width="80"
-              height="80"
-              decoding="async"
-            >
-            <span class="discord-profile__status discord-profile__status--dnd" title="Do Not Disturb" aria-label="Do Not Disturb"></span>
+          <div class="discord-profile__top">
+            <div class="discord-profile__avatar-wrap">
+              <img
+                class="discord-profile__avatar"
+                src="https://raw.githubusercontent.com/Delexoo/About-Me/refs/heads/main/doc/discordpfp.png"
+                alt=""
+                width="80"
+                height="80"
+                decoding="async"
+              >
+              <span class="discord-profile__status discord-profile__status--dnd" title="Do Not Disturb" aria-label="Do Not Disturb"></span>
+            </div>
+            <div class="discord-profile__custom-status" aria-label="Custom status">
+              <span class="discord-profile__custom-status-icon" aria-hidden="true">+</span>
+              <span class="discord-profile__custom-status-text">Most satisfying game mechanic?</span>
+            </div>
           </div>
           <h2 class="discord-profile__display" id="discordModalTitle">delexo</h2>
           <div class="discord-profile__row">
             <span class="discord-profile__username">delexxo</span>
-            <span class="discord-profile__dot" aria-hidden="true">•</span>
+            <span class="discord-profile__dot" aria-hidden="true">·</span>
             <ul class="discord-profile__badges" aria-label="Discord badges">
               <li>
                 <img src="doc/badge-hypesquad-bravery.png" alt="HypeSquad Bravery" title="HypeSquad Bravery" width="22" height="22" loading="lazy" decoding="async">
@@ -616,11 +622,36 @@
               <li>
                 <img src="doc/badge-gifting-luminary.png" alt="Gifting Luminary" title="Gifting Luminary" width="22" height="22" loading="lazy" decoding="async">
               </li>
+              <li>
+                <span class="discord-profile__ai" title="AI">
+                  <svg class="discord-profile__ai-icon" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
+                    <path fill="#57F287" d="M8 1.2l1.1 3.2L12.4 5.5 9.1 7.2 8 10.4 6.9 7.2 3.6 5.5l3.3-1.1z"/>
+                    <path fill="#ED4245" d="M12.2 8.6l.7 2.1 2.1.7-2.1.7-.7 2.1-.7-2.1-2.1-.7 2.1-.7z"/>
+                    <path fill="#FEE75C" d="M3.8 9.2l.55 1.65 1.65.55-1.65.55L3.8 13.6l-.55-1.65L1.6 11.4l1.65-.55z"/>
+                    <path fill="#EB459E" d="M11.2 2.4l.4 1.2 1.2.4-1.2.4-.4 1.2-.4-1.2-1.2-.4 1.2-.4z"/>
+                  </svg>
+                  AI
+                </span>
+              </li>
             </ul>
           </div>
-          <button class="discord-profile__copy" type="button" id="discordModalCopy">
-            Copy username
-          </button>
+          <div class="discord-request">
+            <p class="discord-request__text">
+              <strong>delexo</strong> sent you a friend request.
+            </p>
+            <div class="discord-request__actions">
+              <a
+                class="discord-request__btn discord-request__btn--accept"
+                id="discordModalAccept"
+                href="https://discord.com/users/812938158806794281"
+                target="_blank"
+                rel="noopener noreferrer"
+              >Accept</a>
+              <button class="discord-request__btn discord-request__btn--ignore" type="button" id="discordModalIgnore">
+                Ignore
+              </button>
+            </div>
+          </div>
         </div>
       </article>
     </div>

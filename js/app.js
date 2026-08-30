@@ -1327,7 +1327,11 @@
     const urlLabel = document.getElementById("shareModalUrl");
     const discordModal = document.getElementById("discordModal");
     const discordClose = document.getElementById("discordModalClose");
-    const discordCopy = document.getElementById("discordModalCopy");
+    const discordAccept = document.getElementById("discordModalAccept");
+    const discordIgnore = document.getElementById("discordModalIgnore");
+    const DISCORD_USER_ID = "812938158806794281";
+    const DISCORD_PROFILE_WEB = `https://discord.com/users/${DISCORD_USER_ID}`;
+    const DISCORD_PROFILE_APP = `discord://-/users/${DISCORD_USER_ID}`;
 
     async function copyText(value) {
       if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -1412,7 +1416,7 @@
         discordModal.offsetHeight;
         discordModal.classList.add("is-open");
         document.documentElement.classList.add("discord-modal-open");
-        discordClose?.focus();
+        (discordClose || discordAccept)?.focus();
         return;
       }
 
@@ -1432,6 +1436,19 @@
       }
     }
 
+    function openDiscordProfile() {
+      setDiscordOpen(false);
+      const appLink = document.createElement("a");
+      appLink.href = DISCORD_PROFILE_APP;
+      appLink.rel = "noopener noreferrer";
+      document.body.appendChild(appLink);
+      appLink.click();
+      appLink.remove();
+      window.setTimeout(() => {
+        window.open(DISCORD_PROFILE_WEB, "_blank", "noopener,noreferrer");
+      }, 700);
+    }
+
     if (discordBtn) {
       discordBtn.setAttribute("aria-haspopup", "dialog");
       discordBtn.setAttribute("aria-controls", "discordModal");
@@ -1440,32 +1457,19 @@
           setDiscordOpen(true);
           return;
         }
-        const handle = discordBtn.getAttribute("data-discord") || "delexxo";
-        copyText(handle)
-          .then(() => flashStatus(`Copied Discord: ${handle}`, discordBtn))
-          .catch(() => flashStatus(handle, discordBtn));
+        openDiscordProfile();
       });
     }
 
     if (discordModal) {
       discordClose?.addEventListener("click", () => setDiscordOpen(false));
+      discordIgnore?.addEventListener("click", () => setDiscordOpen(false));
       discordModal.querySelectorAll("[data-discord-close]").forEach((el) => {
         el.addEventListener("click", () => setDiscordOpen(false));
       });
-      discordCopy?.addEventListener("click", async () => {
-        const handle = discordBtn?.getAttribute("data-discord") || "delexxo";
-        try {
-          await copyText(handle);
-          discordCopy.textContent = "Copied!";
-          discordCopy.classList.add("is-done");
-          flashStatus(`Copied Discord: ${handle}`, discordBtn);
-          window.setTimeout(() => {
-            discordCopy.textContent = "Copy username";
-            discordCopy.classList.remove("is-done");
-          }, 1400);
-        } catch (_error) {
-          flashStatus(handle, discordBtn);
-        }
+      discordAccept?.addEventListener("click", (event) => {
+        event.preventDefault();
+        openDiscordProfile();
       });
       document.addEventListener("keydown", (event) => {
         if (event.key === "Escape" && discordOpen) setDiscordOpen(false);
