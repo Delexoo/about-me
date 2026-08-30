@@ -315,6 +315,7 @@
 
     document.addEventListener("click", (event) => {
       if (!isMobile() || !nav.classList.contains("is-open")) return;
+      // Full-screen panel covers the page; only close from outside the toggle/panel chrome
       if (!nav.contains(event.target)) closeMenu();
     });
 
@@ -463,7 +464,7 @@
     const noteCount = document.getElementById("supportersNoteCount");
     if (!list) return;
 
-    const TOP_N = 5;
+    const TOP_N = 10;
     const NOTE_MAX = 100;
 
     function apiBase() {
