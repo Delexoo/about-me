@@ -762,16 +762,7 @@ html.share-modal-open body {
   position: relative;
   padding: 0 16px 16px;
   background: #111214;
-  text-align: center;
-}
-
-.discord-profile__top {
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  min-height: 88px;
-  margin-bottom: 10px;
+  text-align: left;
 }
 
 .discord-profile__avatar-wrap {
@@ -779,7 +770,7 @@ html.share-modal-open body {
   width: 80px;
   height: 80px;
   margin-top: -40px;
-  flex-shrink: 0;
+  margin-bottom: 12px;
 }
 
 .discord-profile__avatar {
@@ -808,56 +799,6 @@ html.share-modal-open body {
     #f23f43;
 }
 
-.discord-profile__custom-status {
-  position: absolute;
-  left: calc(50% + 28px);
-  top: -8px;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  max-width: min(168px, 46vw);
-  padding: 8px 10px;
-  border-radius: 12px;
-  background: #2b2d31;
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.25);
-  text-align: left;
-}
-
-.discord-profile__custom-status::before {
-  content: "";
-  position: absolute;
-  left: -5px;
-  top: 50%;
-  width: 10px;
-  height: 10px;
-  background: #2b2d31;
-  transform: translateY(-50%) rotate(45deg);
-  border-radius: 2px;
-}
-
-.discord-profile__custom-status-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 16px;
-  height: 16px;
-  flex-shrink: 0;
-  border-radius: 50%;
-  background: #5865f2;
-  color: #fff;
-  font-size: 0.7rem;
-  font-weight: 700;
-  line-height: 1;
-}
-
-.discord-profile__custom-status-text {
-  font-size: 0.75rem;
-  font-style: italic;
-  font-weight: 500;
-  line-height: 1.25;
-  color: #b5bac1;
-}
-
 .discord-profile__display {
   margin: 0 0 4px;
   font-size: 1.25rem;
@@ -871,7 +812,7 @@ html.share-modal-open body {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 6px 8px;
   margin-bottom: 14px;
 }
@@ -893,7 +834,6 @@ html.share-modal-open body {
   display: inline-flex;
   flex-wrap: wrap;
   align-items: center;
-  justify-content: center;
   gap: 4px;
   margin: 0;
   padding: 0;
