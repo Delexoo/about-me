@@ -30,14 +30,22 @@ export async function handler(event) {
       return json(500, { error: "db_error", detail: error.message, code: error.code });
     }
 
-    const { displayName, note } = checkoutFieldsFromSession(session);
+    const { displayName, note, socialUrl, avatarUrl } = checkoutFieldsFromSession(session);
     const supporter = data
       ? {
           ...data,
           display_name: data.display_name || displayName,
           note: data.note || note,
+          social_url: data.social_url || socialUrl,
+          avatar_url: data.avatar_url || avatarUrl,
         }
-      : { display_name: displayName, note, social_url: null, total_cents: 0, avatar_url: null };
+      : {
+          display_name: displayName,
+          note,
+          social_url: socialUrl,
+          total_cents: 0,
+          avatar_url: avatarUrl,
+        };
 
     return json(200, { supporter });
   } catch (e) {

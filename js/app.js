@@ -469,25 +469,9 @@
     const list = document.getElementById("supportersList");
     const donateBtn = document.getElementById("supportersDonateBtn");
     const statusEl = document.getElementById("supportersStatus");
-    const thanks = document.getElementById("supportersThanks");
-    const thanksClose = document.getElementById("supportersThanksClose");
-    const skipBtn = document.getElementById("supportersSkipBtn");
-    const saveBtn = document.getElementById("supportersSaveBtn");
-    const nameInput = document.getElementById("supportersName");
-    const noteInput = document.getElementById("supportersNote");
-    const nameCount = document.getElementById("supportersNameCount");
-    const noteCount = document.getElementById("supportersNoteCount");
-    const avatarInput = document.getElementById("supportersAvatar");
-    const avatarPreview = document.getElementById("supportersAvatarPreview");
-    const avatarImg = document.getElementById("supportersAvatarImg");
-    const avatarRemove = document.getElementById("supportersAvatarRemove");
     if (!list) return;
 
     const TOP_N = 10;
-    const NOTE_MAX = 100;
-    const AVATAR_MAX_BYTES = 512 * 1024;
-    const AVATAR_ACCEPT = new Set(["image/jpeg", "image/png", "image/webp"]);
-    let pendingAvatarData = "";
 
     function apiBase() {
       return supportersApiBase();
@@ -539,15 +523,6 @@
 
     function setStatus(message) {
       if (statusEl) statusEl.textContent = message || "";
-    }
-
-    function updateCounts() {
-      if (nameCount && nameInput) {
-        nameCount.textContent = `${nameInput.value.length}/40`;
-      }
-      if (noteCount && noteInput) {
-        noteCount.textContent = `${noteInput.value.length}/${NOTE_MAX}`;
-      }
     }
 
     function avatarInitial(name) {
@@ -661,93 +636,6 @@
       }
     }
 
-    function showThanksForm(sessionId) {
-      if (!thanks) return;
-      thanks.hidden = false;
-      thanks.dataset.sessionId = sessionId || "";
-      try {
-        const previous = localStorage.getItem("sup_display_name");
-        if (previous && nameInput && !nameInput.value) {
-          nameInput.value = previous.slice(0, 40);
-        }
-      } catch (_error) {}
-      updateCounts();
-      nameInput?.focus();
-    }
-
-    function clearAvatarSelection() {
-      pendingAvatarData = "";
-      if (avatarInput) avatarInput.value = "";
-      if (avatarPreview) avatarPreview.hidden = true;
-      if (avatarImg) avatarImg.removeAttribute("src");
-    }
-
-    function showAvatarPreview(dataUrl) {
-      if (!avatarPreview || !avatarImg) return;
-      avatarImg.src = dataUrl;
-      avatarPreview.hidden = false;
-    }
-
-    async function prepareAvatarFile(file) {
-      if (!file) return "";
-      if (!AVATAR_ACCEPT.has(file.type)) {
-        throw new Error("bad_type");
-      }
-      if (file.size > AVATAR_MAX_BYTES) {
-        throw new Error("too_large");
-      }
-      const bitmap = await createImageBitmap(file);
-      const size = 128;
-      const canvas = document.createElement("canvas");
-      canvas.width = size;
-      canvas.height = size;
-      const ctx = canvas.getContext("2d");
-      if (!ctx) {
-        bitmap.close();
-        throw new Error("canvas_unavailable");
-      }
-      const scale = Math.max(size / bitmap.width, size / bitmap.height);
-      const drawW = bitmap.width * scale;
-      const drawH = bitmap.height * scale;
-      ctx.drawImage(bitmap, (size - drawW) / 2, (size - drawH) / 2, drawW, drawH);
-      bitmap.close();
-      return canvas.toDataURL("image/jpeg", 0.88);
-    }
-
-    function hideThanksForm() {
-      if (!thanks) return;
-      thanks.hidden = true;
-      thanks.dataset.sessionId = "";
-      clearAvatarSelection();
-      setStatus("");
-    }
-
-    async function prefillFromBackend(sessionId) {
-      try {
-        const api = apiBase();
-        const endpoint = api
-          ? `${api}/supporter?session_id=${encodeURIComponent(sessionId)}`
-          : `/supporter?session_id=${encodeURIComponent(sessionId)}`;
-        const response = await fetch(endpoint, {
-          headers: { Accept: "application/json" },
-        });
-        if (!response.ok) return;
-        const data = await response.json().catch(() => null);
-        const supporter = data && data.supporter ? data.supporter : null;
-        if (!supporter) return;
-        if (nameInput && typeof supporter.display_name === "string") {
-          nameInput.value = supporter.display_name.slice(0, 40);
-        }
-        if (noteInput && typeof supporter.note === "string") {
-          noteInput.value = supporter.note.slice(0, NOTE_MAX);
-        }
-        if (supporter.avatar_url && normalizeAvatarUrl(supporter.avatar_url)) {
-          showAvatarPreview(normalizeAvatarUrl(supporter.avatar_url));
-        }
-        updateCounts();
-      } catch (_error) {}
-    }
-
     function goToCheckout(stripeUrl) {
       if (!stripeUrl) return;
       setStatus("Opening Stripe checkout…");
@@ -771,22 +659,17 @@
         return;
       }
 
-      const displayName = (nameInput && nameInput.value) || "";
-
       try {
         donateBtn.setAttribute("aria-busy", "true");
         donateBtn.disabled = true;
         setStatus("");
 
-        // Cross-origin API (Render): JSON POST when CORS allows, else GET /donate redirect
         if (api) {
           try {
             const response = await fetch(`${api}/create-checkout-session`, {
               method: "POST",
               headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                display_name: displayName.slice(0, 40),
-              }),
+              body: JSON.stringify({}),
             });
             const data = await response.json().catch(() => null);
             if (response.ok && data && data.url) {
@@ -796,18 +679,14 @@
           } catch (_fetchError) {
             /* CORS on preview origins — use GET redirect on API host */
           }
-          const donateUrl = new URL(`${api}/donate`);
-          if (displayName) {
-            donateUrl.searchParams.set("display_name", displayName.slice(0, 40));
-          }
-          window.location.href = donateUrl.toString();
+          window.location.href = `${api}/donate`;
           return;
         }
 
         const response = await fetch("/create-checkout-session", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ display_name: displayName }),
+          body: JSON.stringify({}),
         });
         const data = await response.json().catch(() => null);
         if (!response.ok || !data || !data.url) {
@@ -826,81 +705,14 @@
       }
     }
 
-    async function saveNote(event) {
-      event.preventDefault();
-      if (!thanks) return;
-
-      const api = apiBase();
-      const sessionId = thanks.dataset.sessionId || "";
-      const name = (nameInput && nameInput.value || "").trim();
-      const note = (noteInput && noteInput.value || "").trim().slice(0, NOTE_MAX);
-
-      if (!sessionId) {
-        setStatus("Missing checkout session. Please donate first.");
-        return;
-      }
-      if (!name) {
-        setStatus("Please enter your name.");
-        nameInput?.focus();
-        return;
-      }
-
-      try {
-        setStatus("Saving…");
-        if (saveBtn) {
-          saveBtn.disabled = true;
-          saveBtn.setAttribute("aria-busy", "true");
-        }
-
-        const response = await fetch(api ? `${api}/save-note` : "/save-note", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            session_id: sessionId,
-            display_name: name,
-            note,
-            social_url: "",
-            avatar_data: pendingAvatarData || undefined,
-          }),
-        });
-        const data = await response.json().catch(() => null);
-        if (!response.ok) {
-          const err = data && data.error;
-          if (err === "avatar_too_large" || err === "avatar_invalid") {
-            setStatus("Profile photo must be a JPG, PNG, or WebP under 512 KB.");
-          } else {
-            setStatus((data && (data.detail || data.error)) || "Couldn’t save your note.");
-          }
-          return;
-        }
-
-        try {
-          localStorage.setItem("sup_display_name", name.slice(0, 40));
-        } catch (_error) {}
-        setStatus("Saved. Thank you for supporting.");
-        clearAvatarSelection();
-        hideThanksForm();
-        await loadLeaderboard();
-      } catch (_error) {
-        setStatus("Couldn’t save your note. Try again.");
-      } finally {
-        if (saveBtn) {
-          saveBtn.disabled = false;
-          saveBtn.removeAttribute("aria-busy");
-        }
-      }
-    }
-
-    function readThanksParams() {
+    function readDonatedParams() {
       const url = new URL(window.location.href);
-      const thanksFlag = url.searchParams.get("thanks");
-      const sessionId = url.searchParams.get("session_id");
-      if (thanksFlag !== "1" || !sessionId) return;
+      const donated = url.searchParams.get("donated");
+      if (donated !== "1") return;
 
-      showThanksForm(sessionId);
-      prefillFromBackend(sessionId);
-      url.searchParams.delete("thanks");
-      url.searchParams.delete("session_id");
+      setStatus("Thank you for supporting.");
+      loadLeaderboard();
+      url.searchParams.delete("donated");
       window.history.replaceState(
         {},
         "",
@@ -908,36 +720,10 @@
       );
     }
 
-    avatarInput?.addEventListener("change", async () => {
-      const file = avatarInput.files && avatarInput.files[0];
-      if (!file) {
-        clearAvatarSelection();
-        return;
-      }
-      try {
-        setStatus("");
-        pendingAvatarData = await prepareAvatarFile(file);
-        showAvatarPreview(pendingAvatarData);
-      } catch (_error) {
-        clearAvatarSelection();
-        setStatus("Profile photo must be a JPG, PNG, or WebP under 512 KB.");
-      }
-    });
-
-    avatarRemove?.addEventListener("click", () => {
-      clearAvatarSelection();
-      setStatus("");
-    });
-
     donateBtn?.addEventListener("click", startCheckout);
-    thanks?.addEventListener("submit", saveNote);
-    thanksClose?.addEventListener("click", hideThanksForm);
-    skipBtn?.addEventListener("click", hideThanksForm);
-    nameInput?.addEventListener("input", updateCounts);
-    noteInput?.addEventListener("input", updateCounts);
 
     loadLeaderboard();
-    readThanksParams();
+    readDonatedParams();
   }
 
   function initMoonriseGithubEmbed() {

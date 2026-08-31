@@ -40,7 +40,7 @@ export async function handler(event) {
       return json(200, { received: true });
     }
 
-    const { displayName, note } = checkoutFieldsFromSession(session);
+    const { displayName, note, socialUrl, avatarUrl } = checkoutFieldsFromSession(session);
 
     const sb = supabaseAdmin();
     const upsertPayload = {
@@ -49,6 +49,8 @@ export async function handler(event) {
       updated_at: new Date().toISOString(),
     };
     if (note) upsertPayload.note = note;
+    if (socialUrl) upsertPayload.social_url = socialUrl;
+    if (avatarUrl) upsertPayload.avatar_url = avatarUrl;
 
     const { data: supporter, error: supErr } = await sb
       .from("supporters")

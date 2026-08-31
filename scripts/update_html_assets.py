@@ -65,7 +65,7 @@ def process_file(path: Path) -> None:
     if path.name == "index.html":
         text = text.replace(
             '<meta name="description" content="Delexo: projects, courses, journey, and more. Cybersecurity student, builder, creator.">',
-            '<meta name="description" content="about delexo, explore the latest achievements, programs, courses, and more.">',
+            '<meta name="description" content="Everything about me, explore my latest achievements, programs, courses, and more.">',
         )
         text = text.replace("<title>DELEXO</title>", "<title>delexo</title>")
 

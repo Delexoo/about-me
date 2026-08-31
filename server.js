@@ -12,7 +12,6 @@ import {
 } from "./lib/avatar.js";
 import {
   CHECKOUT_CUSTOM_FIELDS,
-  CHECKOUT_CUSTOM_TEXT,
   checkoutFieldsFromSession,
 } from "./lib/checkout-fields.js";
 
@@ -144,12 +143,10 @@ app.get("/leaderboard", async (req, res) => {
   }
 });
 
-async function createCheckoutSession(displayName) {
+async function createCheckoutSession() {
   const stripe = stripeServer();
   const siteUrl = mustEnv("SITE_URL");
   const priceId = mustEnv("PRICE_ID");
-  const name =
-    typeof displayName === "string" ? displayName.slice(0, 40) : "";
 
   try {
     await stripe.prices.retrieve(priceId);
@@ -166,11 +163,9 @@ async function createCheckoutSession(displayName) {
     mode: "payment",
     customer_creation: "always",
     line_items: [{ price: priceId, quantity: 1 }],
-    success_url: `${siteUrl}/?thanks=1&session_id={CHECKOUT_SESSION_ID}#supporters`,
+    success_url: `${siteUrl}/?donated=1#supporters`,
     cancel_url: `${siteUrl}/#supporters`,
     custom_fields: CHECKOUT_CUSTOM_FIELDS,
-    custom_text: CHECKOUT_CUSTOM_TEXT,
-    metadata: { display_name: name },
   });
 }
 
@@ -201,10 +196,8 @@ function checkoutErrorResponse(res, e, redirect) {
 
 // Browser-friendly donate URL → 303 redirect to Stripe (no CORS, no JSON page)
 app.get("/donate", async (req, res) => {
-  const displayName =
-    typeof req.query.display_name === "string" ? req.query.display_name : "";
   try {
-    const session = await createCheckoutSession(displayName);
+    const session = await createCheckoutSession();
     res.redirect(303, session.url);
   } catch (e) {
     checkoutErrorResponse(res, e, true);
@@ -214,10 +207,8 @@ app.get("/donate", async (req, res) => {
 // Stripe checkout — GET ?redirect=1 avoids CORS (Live Server / cross-origin previews)
 app.get("/create-checkout-session", async (req, res) => {
   const redirect = req.query.redirect === "1" || req.query.redirect === "true";
-  const displayName =
-    typeof req.query.display_name === "string" ? req.query.display_name : "";
   try {
-    const session = await createCheckoutSession(displayName);
+    const session = await createCheckoutSession();
     if (redirect) return res.redirect(303, session.url);
     res.json({ url: session.url });
   } catch (e) {
@@ -230,8 +221,6 @@ app.post(
   express.json(),
   express.urlencoded({ extended: false }),
   async (req, res) => {
-  const displayName =
-    typeof req.body?.display_name === "string" ? req.body.display_name : "";
   const wantsRedirect =
     req.query.redirect === "1" ||
     req.query.redirect === "true" ||
@@ -239,7 +228,7 @@ app.post(
     req.body?.redirect === "true" ||
     req.body?.redirect === true;
   try {
-    const session = await createCheckoutSession(displayName);
+    const session = await createCheckoutSession();
     if (wantsRedirect) return res.redirect(303, session.url);
     res.json({ url: session.url });
   } catch (e) {
@@ -336,14 +325,22 @@ app.get("/supporter", async (req, res) => {
 
     if (error) return res.status(500).json({ error: "db_error", detail: error.message, code: error.code });
 
-    const { displayName, note } = checkoutFieldsFromSession(session);
+    const { displayName, note, socialUrl, avatarUrl } = checkoutFieldsFromSession(session);
     const supporter = data
       ? {
           ...data,
           display_name: data.display_name || displayName,
           note: data.note || note,
+          social_url: data.social_url || socialUrl,
+          avatar_url: data.avatar_url || avatarUrl,
         }
-      : { display_name: displayName, note, social_url: null, total_cents: 0, avatar_url: null };
+      : {
+          display_name: displayName,
+          note,
+          social_url: socialUrl,
+          total_cents: 0,
+          avatar_url: avatarUrl,
+        };
 
     res.json({ supporter });
   } catch (e) {
@@ -377,7 +374,7 @@ app.post("/stripe-webhook", express.raw({ type: "application/json" }), async (re
     const paymentIntentId = session.payment_intent;
     if (!email || !paymentIntentId || !Number.isFinite(amountTotal)) return res.json({ received: true });
 
-    const { displayName, note } = checkoutFieldsFromSession(session);
+    const { displayName, note, socialUrl, avatarUrl } = checkoutFieldsFromSession(session);
 
     const sb = supabaseAdmin();
     const upsertPayload = {
@@ -386,6 +383,8 @@ app.post("/stripe-webhook", express.raw({ type: "application/json" }), async (re
       updated_at: new Date().toISOString(),
     };
     if (note) upsertPayload.note = note;
+    if (socialUrl) upsertPayload.social_url = socialUrl;
+    if (avatarUrl) upsertPayload.avatar_url = avatarUrl;
 
     const { data: supporter, error: supErr } = await sb
       .from("supporters")

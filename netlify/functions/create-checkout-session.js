@@ -1,8 +1,5 @@
 import { handleOptions, json, mustEnv, stripeServer } from "./_shared.js";
-import {
-  CHECKOUT_CUSTOM_FIELDS,
-  CHECKOUT_CUSTOM_TEXT,
-} from "../../lib/checkout-fields.js";
+import { CHECKOUT_CUSTOM_FIELDS } from "../../lib/checkout-fields.js";
 
 export async function handler(event) {
   const options = handleOptions(event);
@@ -14,10 +11,6 @@ export async function handler(event) {
     const stripe = stripeServer();
     const siteUrl = mustEnv("SITE_URL");
     const priceId = mustEnv("PRICE_ID");
-
-    const body = event.body ? JSON.parse(event.body) : {};
-    const displayName =
-      typeof body.display_name === "string" ? body.display_name.slice(0, 40) : "";
 
     try {
       await stripe.prices.retrieve(priceId);
@@ -36,14 +29,10 @@ export async function handler(event) {
       mode: "payment",
       customer_creation: "always",
       line_items: [{ price: priceId, quantity: 1 }],
-      success_url: `${siteUrl}/?thanks=1&session_id={CHECKOUT_SESSION_ID}#supporters`,
+      success_url: `${siteUrl}/?donated=1#supporters`,
       cancel_url: `${siteUrl}/#supporters`,
       allow_promotion_codes: false,
       custom_fields: CHECKOUT_CUSTOM_FIELDS,
-      custom_text: CHECKOUT_CUSTOM_TEXT,
-      metadata: {
-        display_name: displayName,
-      },
     });
 
     return json(200, { url: session.url });

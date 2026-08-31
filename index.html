@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="about delexo, explore the latest achievements, programs, courses, and more.">
+  <meta name="description" content="Everything about me, explore my latest achievements, programs, courses, and more.">
   <meta name="color-scheme" content="light">
   <title>delexo</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -517,34 +517,6 @@
           <a class="supporters__btn" href="site-information.html#supporters">View all</a>
         </div>
       </div>
-
-      <form class="supporters__thanks" id="supportersThanks" hidden>
-        <div class="supporters__thanks-head">
-          <p class="supporters__thanks-title">Add your profile photo</p>
-          <button class="supporters__thanks-close" type="button" id="supportersThanksClose" aria-label="Close">×</button>
-        </div>
-        <p class="supporters__thanks-sub">Your name and message are collected on Stripe. Optionally add a profile photo here (JPG, PNG, or WebP, max 512 KB).</p>
-        <label class="supporters__field" for="supportersAvatar">
-          <span>Profile photo <span class="supporters__count">optional</span></span>
-          <input id="supportersAvatar" name="avatar" type="file" accept="image/jpeg,image/png,image/webp">
-          <div class="supporters__avatar-preview" id="supportersAvatarPreview" hidden>
-            <img id="supportersAvatarImg" alt="" width="64" height="64" decoding="async">
-            <button class="supporters__avatar-remove" type="button" id="supportersAvatarRemove">Remove</button>
-          </div>
-        </label>
-        <label class="supporters__field" for="supportersName">
-          <span>Name <span class="supporters__count" id="supportersNameCount">0/40</span></span>
-          <input id="supportersName" name="display_name" type="text" maxlength="40" autocomplete="nickname" placeholder="Your name">
-        </label>
-        <label class="supporters__field" for="supportersNote">
-          <span>Note <span class="supporters__count" id="supportersNoteCount">0/100</span></span>
-          <textarea id="supportersNote" name="note" maxlength="100" rows="3" placeholder="One short sentence…"></textarea>
-        </label>
-        <div class="supporters__thanks-actions">
-          <button class="supporters__btn supporters__btn--solid" type="submit" id="supportersSaveBtn">Save</button>
-          <button class="supporters__btn" type="button" id="supportersSkipBtn">Skip</button>
-        </div>
-      </form>
     </div>
   </section>
 
