@@ -34,12 +34,6 @@
     </div>
   </div>
 
-  <header class="page-top page-top--about">
-    <div class="page-wrap">
-      <h1 class="page-top__title">About</h1>
-    </div>
-  </header>
-
   <main class="site-main site-main--page">
     <div class="page-wrap">
       <div class="about-page reveal">
@@ -53,15 +47,26 @@
             decoding="async"
             fetchpriority="high"
           >
-          <div class="about-page__name-row">
-            <h2 class="about-page__name">delexo</h2>
-            <img class="about-page__verified" src="doc/verified.webp" alt="Verified" width="20" height="20" loading="lazy" decoding="async">
+          <div class="about-page__intro">
+            <div class="about-page__name-row">
+              <h1 class="about-page__name">delexo</h1>
+              <img class="about-page__verified" src="doc/verified.webp" alt="Verified" width="20" height="20" loading="lazy" decoding="async">
+            </div>
           </div>
         </div>
 
         <section class="about-page__block" aria-labelledby="connect-title">
           <h3 class="about-page__block-title" id="connect-title">Connect</h3>
           <ul class="about-page__connect">
+            <li>
+              <a class="about-page__connect-link" href="https://discord.com/users/812938158806794281" target="_blank" rel="noopener noreferrer">
+                <span class="about-page__connect-app">
+                  <img class="about-page__connect-icon" src="doc/Discord.webp" alt="" width="22" height="22" loading="lazy" decoding="async">
+                  <span class="about-page__connect-label">Discord</span>
+                </span>
+                <span class="about-page__connect-handle">delexxo</span>
+              </a>
+            </li>
             <li>
               <a class="about-page__connect-link" href="https://t.me/delexoo" target="_blank" rel="noopener noreferrer">
                 <span class="about-page__connect-app">
@@ -140,7 +145,7 @@
           </ul>
         </section>
 
-        <section class="about-page__block" aria-labelledby="stack-title">
+        <section class="about-page__block about-page__block--stack" aria-labelledby="stack-title">
           <h3 class="about-page__block-title" id="stack-title">Tech stack</h3>
           <div class="about-page__stack">
             <div class="about-page__stack-group">
@@ -213,7 +218,6 @@
       <a class="nav-link" href="index.html#supporters">Supporters</a>
       <span class="nav-divider" aria-hidden="true"></span>
       <a class="nav-link" href="index.html#supporters">Donate</a>
-      <a class="nav-link" href="apply.html">Work For Me!</a>
       <a class="nav-link" href="site-information.html#privacy">Privacy</a>
       <a class="nav-link" href="site-information.html#terms">Terms</a>
     </div>

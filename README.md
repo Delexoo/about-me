@@ -29,7 +29,7 @@
 
 <br>
 
-**[delexo.store](https://delexo.store)** · **[GitHub](https://github.com/Delexoo)** · **[Spotify](https://open.spotify.com/user/31dn6hrf3fbxdrfabi2wpqvwvaju)** · **[Work with me](https://delexo.store/apply.html)**
+**[delexo.store](https://delexo.store)** · **[GitHub](https://github.com/Delexoo)** · **[Spotify](https://open.spotify.com/user/31dn6hrf3fbxdrfabi2wpqvwvaju)**
 
 </div>
 
@@ -151,7 +151,7 @@ flowchart TB
 aboutme/
 ├── index.html              # Main portfolio page
 ├── site-information.html   # Privacy, terms, supporter registry
-├── apply.html              # Work / collaboration form
+├── about.html              # About / connect page
 ├── css/
 │   └── style.css           # All site styles
 ├── js/
