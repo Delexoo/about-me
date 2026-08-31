@@ -74,19 +74,19 @@
             <p>Some features only work if you choose to send information:</p>
             <ul>
               <li><span class="site-info__tag">Display name</span> — public name shown on the <a href="index.html#supporters">Top Supporters</a> leaderboard.</li>
-              <li><span class="site-info__tag">Social profile URL</span> — optional link shown next to your name (Instagram, GitHub, etc.).</li>
+              <li><span class="site-info__tag">Note</span> — optional public message shown with your supporter entry (length limited on the form).</li>
               <li><span class="site-info__tag">Profile photo URL</span> — optional direct image link for your leaderboard avatar.</li>
               <li><span class="site-info__tag">Donation amount</span> — the amount you choose when tipping or donating.</li>
               <li><span class="site-info__tag">Email and payment details</span> — collected and processed by Stripe (or another payment provider you use, such as Venmo or Cash App) to complete the payment. I do not store full card numbers on this website.</li>
             </ul>
-            <p>Do not submit information you are not comfortable making public when a field is described as public (name, social URL, profile photo).</p>
+            <p>Do not submit information you are not comfortable making public when a field is described as public (name, note, profile photo).</p>
 
             <h4>4. How donations and the leaderboard work</h4>
             <p>When you use the on-site supporters / donate flow:</p>
             <ol>
               <li>Checkout is typically handled by Stripe. Stripe processes payment information under Stripe’s own privacy policy and terms.</li>
               <li>A backend service (currently hosted on Render) may receive payment confirmation (for example via webhook) and update supporter totals.</li>
-              <li>Leaderboard data is stored in a database (currently Supabase). Public leaderboard reads are limited to fields needed for display — typically display name, note, total support amount, and social URL for entries with a positive total.</li>
+              <li>Leaderboard data is stored in a database (currently Supabase). Public leaderboard reads are limited to fields needed for display — typically display name, note, total support amount, and profile photo for entries with a positive total.</li>
               <li>Email and sensitive payment data are not exposed on the public leaderboard through the site’s public read path.</li>
             </ol>
             <p>Tips or donations sent through Venmo, Cash App, or a Stripe Payment Link outside the on-site form may not automatically appear on the leaderboard unless they are matched and recorded separately.</p>
@@ -125,7 +125,7 @@
             <p>I do not sell personal information. I do not rent or trade supporter lists for advertising.</p>
 
             <h4>8. Public content and visibility</h4>
-            <p>Anything you submit for public display (supporter name, note, social URL, and aggregate support amount) can be seen by anyone who views the leaderboard or related pages. Assume public fields are public worldwide. Do not include private contact details, passwords, or sensitive personal data in notes.</p>
+            <p>Anything you submit for public display (supporter name, note, profile photo, and aggregate support amount) can be seen by anyone who views the leaderboard or related pages. Assume public fields are public worldwide. Do not include private contact details, passwords, or sensitive personal data in notes.</p>
 
             <h4>9. Retention</h4>
             <p>Leaderboard and donation-related records are kept while useful to operate the supporters feature and maintain accurate totals, unless you request deletion where feasible. Browser localStorage remains until you clear it. Payment providers retain records according to their own retention rules and legal obligations (for example tax and fraud prevention).</p>
@@ -182,7 +182,7 @@
             <p>Third-party marks (for example Stripe, GitHub, Beacons, Instagram) belong to their owners. Project repositories and products linked from the site may have their own licenses (including open-source licenses on GitHub).</p>
 
             <h4>5. User-submitted content (notes, names)</h4>
-            <p>If you submit a display name, note, social URL, or similar content, you grant Delexo a worldwide, non-exclusive, royalty-free license to host, display, reproduce, and moderate that content in connection with operating the site and leaderboard. You represent that you have the right to submit it and that it does not violate law or others’ rights.</p>
+            <p>If you submit a display name, note, profile photo, or similar content, you grant Delexo a worldwide, non-exclusive, royalty-free license to host, display, reproduce, and moderate that content in connection with operating the site and leaderboard. You represent that you have the right to submit it and that it does not violate law or others’ rights.</p>
             <p>I may edit, hide, or delete submissions (including notes that are spammy, offensive, misleading, or too long) at my discretion.</p>
 
             <h4>6. Donations, tips, and the leaderboard</h4>
