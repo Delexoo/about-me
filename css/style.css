@@ -479,6 +479,19 @@ html.splash-active body {
   border-color: rgba(0, 0, 0, 0.16);
 }
 
+.quick-link--share {
+  background: var(--text);
+  border-color: var(--text);
+  color: #fff;
+}
+
+.quick-link--share:hover,
+.quick-link--share:focus-visible {
+  background: #2a2a2a;
+  border-color: #2a2a2a;
+  color: #fff;
+}
+
 .quick-link--connect {
   width: auto;
   height: 32px;
