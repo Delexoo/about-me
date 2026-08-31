@@ -39,7 +39,7 @@
       const cfg = supabasePublicConfig();
       if (!cfg) return null;
       const url = new URL(`${cfg.url}/rest/v1/supporters`);
-      url.searchParams.set("select", "display_name,note,total_cents,social_url");
+      url.searchParams.set("select", "display_name,note,total_cents,social_url,avatar_url");
       url.searchParams.set("order", "total_cents.desc");
       url.searchParams.set("limit", String(safeLimit));
       const response = await fetch(url.toString(), {
@@ -57,6 +57,21 @@
 
     try {
       const rows = await tryRender();
+      const supabaseRows = await trySupabase();
+      if (rows && supabaseRows) {
+        const avatarByKey = new Map();
+        for (const row of supabaseRows) {
+          const key = `${row.display_name}|${row.total_cents}`;
+          if (row.avatar_url) avatarByKey.set(key, row.avatar_url);
+        }
+        return rows.map((row) => ({
+          ...row,
+          avatar_url:
+            row.avatar_url ||
+            avatarByKey.get(`${row.display_name}|${row.total_cents}`) ||
+            null,
+        }));
+      }
       if (rows) return rows;
     } catch (_error) {}
 
@@ -462,10 +477,17 @@
     const noteInput = document.getElementById("supportersNote");
     const nameCount = document.getElementById("supportersNameCount");
     const noteCount = document.getElementById("supportersNoteCount");
+    const avatarInput = document.getElementById("supportersAvatar");
+    const avatarPreview = document.getElementById("supportersAvatarPreview");
+    const avatarImg = document.getElementById("supportersAvatarImg");
+    const avatarRemove = document.getElementById("supportersAvatarRemove");
     if (!list) return;
 
     const TOP_N = 10;
     const NOTE_MAX = 100;
+    const AVATAR_MAX_BYTES = 512 * 1024;
+    const AVATAR_ACCEPT = new Set(["image/jpeg", "image/png", "image/webp"]);
+    let pendingAvatarData = "";
 
     function apiBase() {
       return supportersApiBase();
@@ -482,7 +504,7 @@
 
     function safeUrl(url) {
       const value = (url || "").trim();
-      if (!value || value.length > 220) return "";
+      if (!value || value.length > 500) return "";
       try {
         const parsed = new URL(value);
         if (parsed.protocol === "http:" || parsed.protocol === "https:") {
@@ -490,6 +512,17 @@
         }
       } catch (_error) {}
       return "";
+    }
+
+    function normalizeAvatarUrl(url) {
+      const safe = safeUrl(url);
+      if (!safe) return "";
+      const blobMatch = /^https:\/\/github\.com\/([^/]+)\/([^/]+)\/blob\/([^/]+)\/(.+?)(\?.*)?$/i.exec(safe);
+      if (blobMatch) {
+        const [, user, repo, branch, path] = blobMatch;
+        return `https://raw.githubusercontent.com/${user}/${repo}/${branch}/${path}`;
+      }
+      return safe;
     }
 
     function fmtMoneyFromCents(cents) {
@@ -522,17 +555,33 @@
       return trimmed ? trimmed.charAt(0).toUpperCase() : "?";
     }
 
-    function rowHtml({ rank, nameHtml, amount, lead, loading }) {
+    function avatarMarkup({ avatarUrl, name, loading }) {
+      if (loading) {
+        return `<span class="supporters__avatar supporters__avatar--empty" aria-hidden="true"></span>`;
+      }
+      const initial = escapeHtml(avatarInitial(name));
+      const safeAvatar = normalizeAvatarUrl(avatarUrl);
+      if (safeAvatar) {
+        return `<span class="supporters__avatar" aria-hidden="true"><img src="${escapeHtml(safeAvatar)}" alt="" width="34" height="34" loading="lazy" decoding="async"></span>`;
+      }
+      return `<span class="supporters__avatar" aria-hidden="true">${initial}</span>`;
+    }
+
+    function rowHtml({ rank, nameHtml, noteHtml, amount, lead, loading, avatarUrl, name }) {
       const leadClass = lead ? " supporters__row--lead" : "";
       const loadingClass = loading ? " supporters__row--loading" : "";
-      const plainName = nameHtml.replace(/<[^>]*>/g, "");
-      const initial = avatarInitial(plainName);
+      const noteBlock = noteHtml
+        ? `<span class="supporters__note">${noteHtml}</span>`
+        : "";
       return `
         <tr class="supporters__row${leadClass}${loadingClass}">
           <td class="supporters__rank"${rank ? ` aria-label="Rank ${rank}"` : ' aria-hidden="true"'}>${rank || "–"}</td>
           <td class="supporters__name-cell">
-            <span class="supporters__avatar${loading ? " supporters__avatar--empty" : ""}" aria-hidden="true">${loading ? "" : escapeHtml(initial)}</span>
-            <span class="supporters__name">${nameHtml}</span>
+            ${avatarMarkup({ avatarUrl, name, loading })}
+            <span class="supporters__meta">
+              <span class="supporters__name">${nameHtml}</span>
+              ${noteBlock}
+            </span>
           </td>
           <td class="supporters__amount"><span class="supporters__amount-tag">${escapeHtml(amount)}</span></td>
         </tr>`;
@@ -543,9 +592,12 @@
         list.innerHTML = rowHtml({
           rank: "",
           nameHtml: "No supporters yet. Be the first.",
+          noteHtml: "",
           amount: "–",
           lead: true,
           loading: true,
+          avatarUrl: "",
+          name: "",
         });
         list.setAttribute("aria-busy", "false");
         return;
@@ -555,16 +607,21 @@
         const name = (row.display_name || "–").toString();
         const amount = fmtMoneyFromCents(row.total_cents);
         const social = safeUrl(row.social_url);
+        const note = (row.note || "").toString().trim();
         const nameHtml = social
           ? `<a href="${escapeHtml(social)}" target="_blank" rel="noopener noreferrer">${escapeHtml(name)}</a>`
           : escapeHtml(name);
+        const noteHtml = note ? escapeHtml(note) : "";
 
         return rowHtml({
           rank: padRank(index),
           nameHtml,
+          noteHtml,
           amount,
           lead: index === 0,
           loading: false,
+          avatarUrl: row.avatar_url || "",
+          name,
         });
       }).join("");
 
@@ -576,9 +633,12 @@
       list.innerHTML = rowHtml({
         rank: "",
         nameHtml: "Loading supporters…",
+        noteHtml: "",
         amount: "–",
         lead: false,
         loading: true,
+        avatarUrl: "",
+        name: "",
       });
 
       try {
@@ -590,9 +650,12 @@
         list.innerHTML = rowHtml({
           rank: "",
           nameHtml: "Couldn't load supporters.",
+          noteHtml: "",
           amount: "–",
           lead: false,
           loading: true,
+          avatarUrl: "",
+          name: "",
         });
         list.setAttribute("aria-busy", "false");
       }
@@ -612,10 +675,50 @@
       nameInput?.focus();
     }
 
+    function clearAvatarSelection() {
+      pendingAvatarData = "";
+      if (avatarInput) avatarInput.value = "";
+      if (avatarPreview) avatarPreview.hidden = true;
+      if (avatarImg) avatarImg.removeAttribute("src");
+    }
+
+    function showAvatarPreview(dataUrl) {
+      if (!avatarPreview || !avatarImg) return;
+      avatarImg.src = dataUrl;
+      avatarPreview.hidden = false;
+    }
+
+    async function prepareAvatarFile(file) {
+      if (!file) return "";
+      if (!AVATAR_ACCEPT.has(file.type)) {
+        throw new Error("bad_type");
+      }
+      if (file.size > AVATAR_MAX_BYTES) {
+        throw new Error("too_large");
+      }
+      const bitmap = await createImageBitmap(file);
+      const size = 128;
+      const canvas = document.createElement("canvas");
+      canvas.width = size;
+      canvas.height = size;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) {
+        bitmap.close();
+        throw new Error("canvas_unavailable");
+      }
+      const scale = Math.max(size / bitmap.width, size / bitmap.height);
+      const drawW = bitmap.width * scale;
+      const drawH = bitmap.height * scale;
+      ctx.drawImage(bitmap, (size - drawW) / 2, (size - drawH) / 2, drawW, drawH);
+      bitmap.close();
+      return canvas.toDataURL("image/jpeg", 0.88);
+    }
+
     function hideThanksForm() {
       if (!thanks) return;
       thanks.hidden = true;
       thanks.dataset.sessionId = "";
+      clearAvatarSelection();
       setStatus("");
     }
 
@@ -637,6 +740,9 @@
         }
         if (noteInput && typeof supporter.note === "string") {
           noteInput.value = supporter.note.slice(0, NOTE_MAX);
+        }
+        if (supporter.avatar_url && normalizeAvatarUrl(supporter.avatar_url)) {
+          showAvatarPreview(normalizeAvatarUrl(supporter.avatar_url));
         }
         updateCounts();
       } catch (_error) {}
@@ -754,13 +860,17 @@
             display_name: name,
             note,
             social_url: "",
+            avatar_data: pendingAvatarData || undefined,
           }),
         });
         const data = await response.json().catch(() => null);
         if (!response.ok) {
-          setStatus(
-            (data && (data.detail || data.error)) || "Couldn’t save your note."
-          );
+          const err = data && data.error;
+          if (err === "avatar_too_large" || err === "avatar_invalid") {
+            setStatus("Profile photo must be a JPG, PNG, or WebP under 512 KB.");
+          } else {
+            setStatus((data && (data.detail || data.error)) || "Couldn’t save your note.");
+          }
           return;
         }
 
@@ -768,6 +878,8 @@
           localStorage.setItem("sup_display_name", name.slice(0, 40));
         } catch (_error) {}
         setStatus("Saved. Thank you for supporting.");
+        clearAvatarSelection();
+        hideThanksForm();
         await loadLeaderboard();
       } catch (_error) {
         setStatus("Couldn’t save your note. Try again.");
@@ -795,6 +907,27 @@
         url.pathname + (url.search ? url.search : "") + url.hash
       );
     }
+
+    avatarInput?.addEventListener("change", async () => {
+      const file = avatarInput.files && avatarInput.files[0];
+      if (!file) {
+        clearAvatarSelection();
+        return;
+      }
+      try {
+        setStatus("");
+        pendingAvatarData = await prepareAvatarFile(file);
+        showAvatarPreview(pendingAvatarData);
+      } catch (_error) {
+        clearAvatarSelection();
+        setStatus("Profile photo must be a JPG, PNG, or WebP under 512 KB.");
+      }
+    });
+
+    avatarRemove?.addEventListener("click", () => {
+      clearAvatarSelection();
+      setStatus("");
+    });
 
     donateBtn?.addEventListener("click", startCheckout);
     thanks?.addEventListener("submit", saveNote);

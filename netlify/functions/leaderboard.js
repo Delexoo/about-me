@@ -14,7 +14,7 @@ export async function handler(event) {
     const sb = supabaseAdmin();
     const { data, error } = await sb
       .from("supporters")
-      .select("display_name,note,total_cents,social_url")
+      .select("display_name,note,total_cents,social_url,avatar_url")
       .order("total_cents", { ascending: false })
       .limit(limit);
 

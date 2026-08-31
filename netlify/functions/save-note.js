@@ -1,4 +1,9 @@
 import { handleOptions, json, stripeServer, supabaseAdmin } from "./_shared.js";
+import {
+  avatarErrorResponse,
+  parseAvatarDataUrl,
+  uploadSupporterAvatar,
+} from "../../lib/avatar.js";
 
 export async function handler(event) {
   const options = handleOptions(event);
@@ -14,6 +19,7 @@ export async function handler(event) {
     const note = typeof body.note === "string" ? body.note.trim().slice(0, 100) : "";
     const socialUrlRaw =
       typeof body.social_url === "string" ? body.social_url.trim().slice(0, 220) : "";
+    const avatarData = typeof body.avatar_data === "string" ? body.avatar_data.trim() : "";
     if (!sessionId || !displayName) return json(400, { error: "missing_fields" });
 
     const stripe = stripeServer();
@@ -34,13 +40,24 @@ export async function handler(event) {
     }
 
     const sb = supabaseAdmin();
+    let avatar_url = undefined;
+    if (avatarData) {
+      const raw = parseAvatarDataUrl(avatarData);
+      if (raw) avatar_url = await uploadSupporterAvatar(sb, email, raw);
+    }
+
+    const upsertPayload = {
+      email,
+      display_name: displayName,
+      note: note || null,
+      social_url,
+    };
+    if (avatar_url) upsertPayload.avatar_url = avatar_url;
+
     const { data, error } = await sb
       .from("supporters")
-      .upsert(
-        { email, display_name: displayName, note: note || null, social_url },
-        { onConflict: "email" }
-      )
-      .select("display_name,note,total_cents,social_url")
+      .upsert(upsertPayload, { onConflict: "email" })
+      .select("display_name,note,total_cents,social_url,avatar_url")
       .single();
 
     if (error) {
@@ -48,6 +65,8 @@ export async function handler(event) {
     }
     return json(200, { supporter: data });
   } catch (e) {
+    const avatarErr = avatarErrorResponse(e);
+    if (avatarErr) return json(avatarErr.status, { error: avatarErr.error });
     const msg = e?.message ? String(e.message) : "";
     if (msg.startsWith("Missing env var:")) {
       return json(500, { error: "missing_env", detail: msg });

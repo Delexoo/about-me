@@ -1,4 +1,5 @@
 import { handleOptions, json, stripeServer, supabaseAdmin } from "./_shared.js";
+import { checkoutFieldsFromSession } from "../../lib/checkout-fields.js";
 
 export async function handler(event) {
   const options = handleOptions(event);
@@ -21,14 +22,24 @@ export async function handler(event) {
     const sb = supabaseAdmin();
     const { data, error } = await sb
       .from("supporters")
-      .select("display_name,note,social_url,total_cents")
+      .select("display_name,note,social_url,total_cents,avatar_url")
       .eq("email", email)
       .maybeSingle();
 
     if (error) {
       return json(500, { error: "db_error", detail: error.message, code: error.code });
     }
-    return json(200, { supporter: data || null });
+
+    const { displayName, note } = checkoutFieldsFromSession(session);
+    const supporter = data
+      ? {
+          ...data,
+          display_name: data.display_name || displayName,
+          note: data.note || note,
+        }
+      : { display_name: displayName, note, social_url: null, total_cents: 0, avatar_url: null };
+
+    return json(200, { supporter });
   } catch (e) {
     const msg = e?.message ? String(e.message) : "";
     return json(500, { error: "server_error", detail: msg || "unknown" });

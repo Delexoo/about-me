@@ -5,6 +5,16 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import Stripe from "stripe";
 import { createClient } from "@supabase/supabase-js";
+import {
+  avatarErrorResponse,
+  parseAvatarDataUrl,
+  uploadSupporterAvatar,
+} from "./lib/avatar.js";
+import {
+  CHECKOUT_CUSTOM_FIELDS,
+  CHECKOUT_CUSTOM_TEXT,
+  checkoutFieldsFromSession,
+} from "./lib/checkout-fields.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -124,7 +134,7 @@ app.get("/leaderboard", async (req, res) => {
     const sb = supabaseAdmin();
     const { data, error } = await sb
       .from("supporters")
-      .select("display_name,note,total_cents,social_url")
+      .select("display_name,note,total_cents,social_url,avatar_url")
       .order("total_cents", { ascending: false })
       .limit(limit);
     if (error) return res.status(500).json({ error: "db_error", detail: error.message, code: error.code });
@@ -158,6 +168,8 @@ async function createCheckoutSession(displayName) {
     line_items: [{ price: priceId, quantity: 1 }],
     success_url: `${siteUrl}/?thanks=1&session_id={CHECKOUT_SESSION_ID}#supporters`,
     cancel_url: `${siteUrl}/#supporters`,
+    custom_fields: CHECKOUT_CUSTOM_FIELDS,
+    custom_text: CHECKOUT_CUSTOM_TEXT,
     metadata: { display_name: name },
   });
 }
@@ -236,12 +248,14 @@ app.post(
 });
 
 // Save note (after payment)
-app.post("/save-note", express.json(), async (req, res) => {
+app.post("/save-note", express.json({ limit: "300kb" }), async (req, res) => {
   try {
     const sessionId = typeof req.body?.session_id === "string" ? req.body.session_id : "";
     const displayName = typeof req.body?.display_name === "string" ? req.body.display_name.trim().slice(0, 40) : "";
     const note = typeof req.body?.note === "string" ? req.body.note.trim().slice(0, 100) : "";
     const socialUrlRaw = typeof req.body?.social_url === "string" ? req.body.social_url.trim().slice(0, 220) : "";
+    const avatarData =
+      typeof req.body?.avatar_data === "string" ? req.body.avatar_data.trim() : "";
     if (!sessionId || !displayName) return res.status(400).json({ error: "missing_fields" });
 
     const stripe = stripeServer();
@@ -262,15 +276,34 @@ app.post("/save-note", express.json(), async (req, res) => {
     }
 
     const sb = supabaseAdmin();
+    let avatar_url = undefined;
+    if (avatarData) {
+      const raw = parseAvatarDataUrl(avatarData);
+      if (raw) avatar_url = await uploadSupporterAvatar(sb, email, raw);
+    }
+
+    const upsertPayload = {
+      email,
+      display_name: displayName,
+      note: note || null,
+      social_url,
+    };
+    if (avatar_url) upsertPayload.avatar_url = avatar_url;
+
     const { data, error } = await sb
       .from("supporters")
-      .upsert({ email, display_name: displayName, note: note || null, social_url }, { onConflict: "email" })
-      .select("display_name,note,total_cents,social_url")
+      .upsert(upsertPayload, { onConflict: "email" })
+      .select("display_name,note,total_cents,social_url,avatar_url")
       .single();
 
     if (error) return res.status(500).json({ error: "db_error", detail: error.message, code: error.code });
     res.json({ supporter: data });
   } catch (e) {
+    const avatarErr = avatarErrorResponse(e);
+    if (avatarErr) {
+      res.status(avatarErr.status).json({ error: avatarErr.error });
+      return;
+    }
     console.error("save-note error:", e);
     const msg = e?.message ? String(e.message) : "";
     if (msg.startsWith("Missing env var:")) {
@@ -297,12 +330,22 @@ app.get("/supporter", async (req, res) => {
     const sb = supabaseAdmin();
     const { data, error } = await sb
       .from("supporters")
-      .select("display_name,note,social_url,total_cents")
+      .select("display_name,note,social_url,total_cents,avatar_url")
       .eq("email", email)
       .maybeSingle();
 
     if (error) return res.status(500).json({ error: "db_error", detail: error.message, code: error.code });
-    res.json({ supporter: data || null });
+
+    const { displayName, note } = checkoutFieldsFromSession(session);
+    const supporter = data
+      ? {
+          ...data,
+          display_name: data.display_name || displayName,
+          note: data.note || note,
+        }
+      : { display_name: displayName, note, social_url: null, total_cents: 0, avatar_url: null };
+
+    res.json({ supporter });
   } catch (e) {
     console.error("supporter prefill error:", e);
     const msg = e?.message ? String(e.message) : "";
@@ -334,18 +377,19 @@ app.post("/stripe-webhook", express.raw({ type: "application/json" }), async (re
     const paymentIntentId = session.payment_intent;
     if (!email || !paymentIntentId || !Number.isFinite(amountTotal)) return res.json({ received: true });
 
+    const { displayName, note } = checkoutFieldsFromSession(session);
+
     const sb = supabaseAdmin();
+    const upsertPayload = {
+      email,
+      display_name: displayName,
+      updated_at: new Date().toISOString(),
+    };
+    if (note) upsertPayload.note = note;
 
     const { data: supporter, error: supErr } = await sb
       .from("supporters")
-      .upsert(
-        {
-          email,
-          display_name: (session.metadata?.display_name || "Supporter").slice(0, 40),
-          updated_at: new Date().toISOString(),
-        },
-        { onConflict: "email" }
-      )
+      .upsert(upsertPayload, { onConflict: "email" })
       .select("id,total_cents")
       .single();
 

@@ -1,4 +1,5 @@
 import { handleOptions, json, mustEnv, stripeServer, supabaseAdmin } from "./_shared.js";
+import { checkoutFieldsFromSession } from "../../lib/checkout-fields.js";
 
 function rawBody(event) {
   return event.isBase64Encoded
@@ -39,18 +40,19 @@ export async function handler(event) {
       return json(200, { received: true });
     }
 
+    const { displayName, note } = checkoutFieldsFromSession(session);
+
     const sb = supabaseAdmin();
+    const upsertPayload = {
+      email,
+      display_name: displayName,
+      updated_at: new Date().toISOString(),
+    };
+    if (note) upsertPayload.note = note;
 
     const { data: supporter, error: supErr } = await sb
       .from("supporters")
-      .upsert(
-        {
-          email,
-          display_name: (session.metadata?.display_name || "Supporter").slice(0, 40),
-          updated_at: new Date().toISOString(),
-        },
-        { onConflict: "email" }
-      )
+      .upsert(upsertPayload, { onConflict: "email" })
       .select("id,total_cents")
       .single();
 
