@@ -29,7 +29,7 @@
 
 <br>
 
-**[delexo.store](https://delexo.store)** · **[GitHub](https://github.com/Delexoo)** · **[Spotify](https://open.spotify.com/user/31dn6hrf3fbxdrfabi2wpqvwvaju)**
+**[delexo.store](https://delexo.store)** · **[GitHub](https://github.com/Delexoo)** · **[Spotify](https://open.spotify.com/user/31bkbmqthacfrfchjncyj2kpvase?si=a728a5564ee6441d)**
 
 </div>
 
@@ -355,9 +355,7 @@ Please **do not** commit `.env`, `essential variables.txt`, or `render-env.txt` 
 |---|---|
 | **Website** | [delexo.store](https://delexo.store) |
 | **GitHub** | [@Delexoo](https://github.com/Delexoo) |
-| **Spotify** | [Profile](https://open.spotify.com/user/31dn6hrf3fbxdrfabi2wpqvwvaju) |
-| **Venmo** | [@onepoundcoins](https://account.venmo.com/u/onepoundcoins) |
-| **Cash App** | [$VXQQ](https://cash.app/$VXQQ) |
+| **Spotify** | [Profile](https://open.spotify.com/user/31bkbmqthacfrfchjncyj2kpvase?si=a728a5564ee6441d) |
 | **Privacy & Terms** | [site-information.html](https://delexo.store/site-information.html) |
 
 <br>

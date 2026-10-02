@@ -78,7 +78,7 @@
               <li><span class="site-info__tag">Note</span> — optional public message shown with your supporter entry (length limited on the form).</li>
               <li><span class="site-info__tag">Profile photo URL</span> — optional direct image link for your leaderboard avatar.</li>
               <li><span class="site-info__tag">Donation amount</span> — the amount you choose when tipping or donating.</li>
-              <li><span class="site-info__tag">Email and payment details</span> — collected and processed by Stripe (or another payment provider you use, such as Venmo or Cash App) to complete the payment. I do not store full card numbers on this website.</li>
+              <li><span class="site-info__tag">Email and payment details</span> — collected and processed by Stripe to complete the payment. I do not store full card numbers on this website.</li>
             </ul>
             <p>Do not submit information you are not comfortable making public when a field is described as public (name, note, profile photo).</p>
 
@@ -90,7 +90,7 @@
               <li>Leaderboard data is stored in a database (currently Supabase). Public leaderboard reads are limited to fields needed for display — typically display name, note, total support amount, and profile photo for entries with a positive total.</li>
               <li>Email and sensitive payment data are not exposed on the public leaderboard through the site’s public read path.</li>
             </ol>
-            <p>Tips or donations sent through Venmo, Cash App, or a Stripe Payment Link outside the on-site form may not automatically appear on the leaderboard unless they are matched and recorded separately.</p>
+            <p>Tips or donations sent through a Stripe Payment Link outside the on-site form may not automatically appear on the leaderboard unless they are matched and recorded separately.</p>
 
             <h4>5. Information stored in your browser</h4>
             <p>The site may use your browser’s <span class="site-info__tag">localStorage</span> (or similar local storage) for small, site-only preferences, for example:</p>
@@ -110,7 +110,7 @@
               <li>GitHub / GitHub Pages or raw content (hosting, images, project links)</li>
               <li>Beacons (courses and Capes++ shop)</li>
               <li>Google Fonts and icon / favicon CDNs</li>
-              <li>Social and product sites: Instagram, Discord, GitHub, Spotify, Telegram, NameMC, GD Browser, Venmo, Cash App, and project domains such as freeuniversitytools.com and serverly.store</li>
+              <li>Social and product sites: Instagram, Discord, GitHub, Spotify, Telegram, NameMC, GD Browser, and project domains such as freeuniversitytools.com and serverly.store</li>
             </ul>
             <p>When you click those links or load those resources, the third party may collect data according to their own privacy practices. I am not responsible for their policies or practices.</p>
 
@@ -191,7 +191,7 @@
               <li>Tips and donations are voluntary. Unless a specific campaign states otherwise in writing, they are generally non-refundable once processed, except where required by law or by the payment provider’s rules.</li>
               <li>Amounts shown on the leaderboard reflect recorded support totals and may lag, exclude off-platform tips, or be adjusted to correct errors or abuse.</li>
               <li>Leaderboard ranking is a courtesy feature, not a contest with guaranteed prizes unless expressly advertised as such.</li>
-              <li>Payment processing is performed by third parties (for example Stripe, Venmo, Cash App). Their fees, currency conversion, holds, and dispute processes apply.</li>
+              <li>Payment processing is performed by Stripe. Stripe’s fees, currency conversion, holds, and dispute processes apply.</li>
               <li>You are responsible for any taxes that apply to your payments in your jurisdiction.</li>
             </ul>
 
@@ -242,7 +242,7 @@
               <div class="site-info__links">
                 <a href="https://www.instagram.com/trymoonrise/" target="_blank" rel="noopener noreferrer"><span>Instagram</span><span>@trymoonrise</span></a>
                 <a href="https://github.com/Delexoo/" target="_blank" rel="noopener noreferrer"><span>GitHub</span><span>github.com/Delexoo</span></a>
-                <a href="https://open.spotify.com/user/31dn6hrf3fbxdrfabi2wpqvwvaju" target="_blank" rel="noopener noreferrer"><span>Spotify</span><span>Profile</span></a>
+                <a href="https://open.spotify.com/user/31bkbmqthacfrfchjncyj2kpvase?si=a728a5564ee6441d" target="_blank" rel="noopener noreferrer"><span>Spotify</span><span>Profile</span></a>
                 <a href="https://t.me/delexoo" target="_blank" rel="noopener noreferrer"><span>Telegram</span><span>@delexoo</span></a>
                 <a href="https://namemc.com/profile/Delexo" target="_blank" rel="noopener noreferrer"><span>NameMC</span><span>@delexo</span></a>
                 <a href="https://gdbrowser.com/u/vans" target="_blank" rel="noopener noreferrer"><span>GD Browser</span><span>@Vans</span></a>
@@ -252,9 +252,7 @@
             <div class="site-info__links-group">
               <p class="site-info__links-label">Support</p>
               <div class="site-info__links">
-                <a href="https://account.venmo.com/u/onepoundcoins" target="_blank" rel="noopener noreferrer"><span>Venmo</span><span>@onepoundcoins</span></a>
-                <a href="https://cash.app/$VXQQ" target="_blank" rel="noopener noreferrer"><span>Cash App</span><span>$VXQQ</span></a>
-                <a href="index.html#supporters"><span>Tip Me</span><span>Leaderboard</span></a>
+                <a href="index.html#supporters"><span>Tip Me</span><span>Stripe</span></a>
                 <a href="index.html#supporters"><span>Supporters</span><span>Leaderboard</span></a>
               </div>
             </div>
