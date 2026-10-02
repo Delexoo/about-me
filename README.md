@@ -329,7 +329,7 @@ sequenceDiagram
 | Serverly | [serverly.store](https://www.serverly.store/) |
 | Beats | [delexoo.github.io/beats](https://delexoo.github.io/beats/) |
 | GitReplay | [delexoo.github.io/GitReplay](https://delexoo.github.io/GitReplay/) |
-| Vanta | [delexoo.github.io/vanta](https://delexoo.github.io/vanta/) |
+| VoidClient | [github.com/Delexoo/VoidClient](https://github.com/Delexoo/VoidClient) |
 | PrankApp | [github.com/Delexoo/PrankApp](https://github.com/Delexoo/PrankApp) |
 
 ---

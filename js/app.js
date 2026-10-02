@@ -9,11 +9,11 @@
   }
 
   function supabasePublicConfig() {
-    const url = (window.SUPABASE_URL || "").replace(/\/+$/, "");
+    const url = (window.SUPABASE_URL || "https://ranledjcieojxophmxts.supabase.co").replace(/\/+$/, "");
     const key =
       window.SUPABASE_ANON_KEY ||
       window.SUPABASE_PUBLISHABLE_KEY ||
-      "";
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJhbmxlZGpjaWVvanhvcGhteHRzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA5Mzk3NTAsImV4cCI6MjEwNjUxNTc1MH0.C5PXIv4jLaJB2qbysK4ByCZqym0YQn3ODEhjtW1ZZi0";
     return url && key ? { url, key } : null;
   }
 
@@ -1637,6 +1637,68 @@
     });
   }
 
+  function initUniqueViews() {
+    const el = document.getElementById("siteViews");
+    if (!el) return;
+
+    const cfg = supabasePublicConfig();
+    if (!cfg) return;
+
+    const storageKey = "delexo_visitor_id";
+    let visitorId = "";
+    try {
+      visitorId = localStorage.getItem(storageKey) || "";
+      if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(visitorId)) {
+        visitorId = crypto.randomUUID();
+        localStorage.setItem(storageKey, visitorId);
+      }
+    } catch (_error) {
+      return;
+    }
+
+    const headers = {
+      apikey: cfg.key,
+      Authorization: `Bearer ${cfg.key}`,
+      Accept: "application/json",
+    };
+
+    const paint = (total) => {
+      const count = Number(total);
+      if (!Number.isFinite(count)) return;
+      el.textContent = `Views: ${count.toLocaleString()}`;
+    };
+
+    (async () => {
+      try {
+        const seenKey = "delexo_visitor_seen";
+        const alreadySeen = localStorage.getItem(seenKey) === visitorId;
+        if (!alreadySeen) {
+          const inserted = await fetch(`${cfg.url}/rest/v1/site_visitors`, {
+            method: "POST",
+            headers: {
+              ...headers,
+              "Content-Type": "application/json",
+              Prefer: "return=minimal",
+            },
+            body: JSON.stringify({ visitor_id: visitorId }),
+            cache: "no-store",
+          });
+          if (inserted.ok || inserted.status === 409) {
+            localStorage.setItem(seenKey, visitorId);
+          }
+        }
+
+        const response = await fetch(
+          `${cfg.url}/rest/v1/site_stats?select=unique_visitors&id=eq.1`,
+          { headers, cache: "no-store" }
+        );
+        if (!response.ok) return;
+        const rows = await response.json().catch(() => null);
+        paint(rows && rows[0] ? rows[0].unique_visitors : null);
+      } catch (_error) {}
+    })();
+  }
+
   initSplash();
   initPageTransitions();
   initScrollProgress();
@@ -1655,4 +1717,5 @@
   initQuickLinks();
   initProjectTips();
   initYtComment();
+  initUniqueViews();
 })();
