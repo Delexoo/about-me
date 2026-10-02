@@ -1,8 +1,8 @@
 (function () {
   "use strict";
 
-  const SPLASH_MIN_MS = 1100;
-  const SPLASH_FADE_MS = 850;
+  const SPLASH_MIN_MS = 180;
+  const SPLASH_FADE_MS = 280;
 
   function supportersApiBase() {
     return (window.SUPPORTERS_API_BASE || "").replace(/\/+$/, "");
@@ -17,22 +17,18 @@
     return url && key ? { url, key } : null;
   }
 
-  /** Render API first; Supabase REST fallback when CORS blocks preview origins. */
+  /** Public Supabase read first so the board does not wait on a cold API server. */
   async function fetchLeaderboardRows(limit) {
     const safeLimit = Math.max(1, Math.min(10000, Math.floor(Number(limit) || 5)));
-    const api = supportersApiBase();
 
-    const tryRender = async () => {
-      const endpoint = api
-        ? `${api}/leaderboard?limit=${safeLimit}`
-        : `/leaderboard?limit=${safeLimit}`;
-      const response = await fetch(endpoint, {
-        headers: { Accept: "application/json" },
+    const fetchJson = async (url, headers) => {
+      const response = await fetch(url, {
+        headers,
         cache: "no-store",
+        signal: AbortSignal.timeout(6000),
       });
       if (!response.ok) return null;
-      const data = await response.json().catch(() => null);
-      return data && Array.isArray(data.rows) ? data.rows : null;
+      return response.json().catch(() => null);
     };
 
     const trySupabase = async () => {
@@ -42,41 +38,30 @@
       url.searchParams.set("select", "display_name,note,total_cents,social_url,avatar_url");
       url.searchParams.set("order", "total_cents.desc");
       url.searchParams.set("limit", String(safeLimit));
-      const response = await fetch(url.toString(), {
-        headers: {
-          apikey: cfg.key,
-          Authorization: `Bearer ${cfg.key}`,
-          Accept: "application/json",
-        },
-        cache: "no-store",
+      const rows = await fetchJson(url.toString(), {
+        apikey: cfg.key,
+        Authorization: `Bearer ${cfg.key}`,
+        Accept: "application/json",
       });
-      if (!response.ok) return null;
-      const rows = await response.json().catch(() => null);
       return Array.isArray(rows) ? rows : null;
     };
 
+    const tryApi = async () => {
+      const api = supportersApiBase();
+      const endpoint = api
+        ? `${api}/leaderboard?limit=${safeLimit}`
+        : `/leaderboard?limit=${safeLimit}`;
+      const data = await fetchJson(endpoint, { Accept: "application/json" });
+      return data && Array.isArray(data.rows) ? data.rows : null;
+    };
+
     try {
-      const rows = await tryRender();
-      const supabaseRows = await trySupabase();
-      if (rows && supabaseRows) {
-        const avatarByKey = new Map();
-        for (const row of supabaseRows) {
-          const key = `${row.display_name}|${row.total_cents}`;
-          if (row.avatar_url) avatarByKey.set(key, row.avatar_url);
-        }
-        return rows.map((row) => ({
-          ...row,
-          avatar_url:
-            row.avatar_url ||
-            avatarByKey.get(`${row.display_name}|${row.total_cents}`) ||
-            null,
-        }));
-      }
+      const rows = await trySupabase();
       if (rows) return rows;
     } catch (_error) {}
 
     try {
-      const rows = await trySupabase();
+      const rows = await tryApi();
       if (rows) return rows;
     } catch (_error) {}
 
@@ -116,10 +101,10 @@
       window.setTimeout(hide, wait);
     };
 
-    if (document.readyState === "complete") {
+    if (document.readyState !== "loading") {
       finish();
     } else {
-      window.addEventListener("load", finish, { once: true });
+      document.addEventListener("DOMContentLoaded", finish, { once: true });
     }
   }
 

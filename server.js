@@ -435,10 +435,17 @@ app.use(async (req, res) => {
     } catch (_) {}
 
     const ext = path.extname(filePath).toLowerCase();
-    const contentType = MIME[ext] || "application/octet-stream";
+    const isDiscordVerify = req.path === "/.well-known/discord";
+    const contentType = isDiscordVerify
+      ? "text/plain; charset=utf-8"
+      : MIME[ext] || "application/octet-stream";
     const data = await readFile(filePath);
     res.setHeader("Content-Type", contentType);
-    res.setHeader("Cache-Control", "no-store");
+    const cacheable = Boolean(ext) && ext !== ".html" && !isDiscordVerify;
+    res.setHeader(
+      "Cache-Control",
+      cacheable ? "public, max-age=86400" : "no-cache"
+    );
     res.status(200).send(data);
   } catch (_e) {
     res.status(404).type("text").send("Not found");

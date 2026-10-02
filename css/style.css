@@ -93,14 +93,14 @@ a.text-link:hover {
   background: var(--bg);
   opacity: 1;
   visibility: visible;
-  transition: opacity 0.85s cubic-bezier(0.22, 1, 0.36, 1), visibility 0s;
+  transition: opacity 0.28s cubic-bezier(0.22, 1, 0.36, 1), visibility 0s;
 }
 
 .splash.is-hidden {
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
-  transition: opacity 0.85s cubic-bezier(0.22, 1, 0.36, 1), visibility 0s 0.85s;
+  transition: opacity 0.28s cubic-bezier(0.22, 1, 0.36, 1), visibility 0s 0.28s;
 }
 
 .splash__grid {
@@ -4093,6 +4093,13 @@ body:has(.site-dock) .site-main--page {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .splash.is-hidden,
+  .splash.is-hidden .splash__grid {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+
   .splash,
   .splash__grid,
   .splash__dot,

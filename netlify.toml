@@ -29,3 +29,24 @@
   from = "/stripe-webhook"
   to = "/.netlify/functions/stripe-webhook"
   status = 200
+
+[[headers]]
+  for = "/.well-known/discord"
+  [headers.values]
+    Content-Type = "text/plain; charset=utf-8"
+    Cache-Control = "no-cache"
+
+[[headers]]
+  for = "/css/*"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"
+
+[[headers]]
+  for = "/js/*"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"
+
+[[headers]]
+  for = "/doc/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
