@@ -830,6 +830,33 @@ function runFlip(panel, first) {
   anim.oncancel = clear;
 }
 
+function runSlideOut(panel, first) {
+  const inline = panel.style.transform;
+  panel.style.transform = "none";
+  const base = panel.getBoundingClientRect();
+  panel.style.transform = inline;
+  if (!first || !first.width || !base.width) return;
+  const dx = first.left - base.left;
+  const dy = first.top - base.top;
+  const distance = first.width * 1.05;
+  panel.getAnimations().forEach((anim) => anim.cancel());
+  panel.animate(
+    [
+      { transform: `translate(${dx}px, ${dy}px)` },
+      { transform: `translate(${dx + distance}px, ${dy}px)` },
+    ],
+    { duration: 560, easing: "cubic-bezier(0.22, 1, 0.36, 1)" }
+  );
+  panel.animate(
+    [
+      { opacity: 1, offset: 0 },
+      { opacity: 1, offset: 0.6 },
+      { opacity: 0, offset: 1 },
+    ],
+    { duration: 560, easing: "linear" }
+  );
+}
+
 function runShrink(panel, first) {
   const card = panel.querySelector(".card.is-on");
   if (!card) return;
@@ -862,25 +889,10 @@ function runShrink(panel, first) {
   anim.oncancel = clear;
 }
 
-function revealMobileInfo(prev) {
-  const behavior = motionOk ? "smooth" : "auto";
-  const about = inAbout(view);
-  const target = view === "socials" ? document.getElementById("social-row") : null;
-  if (target) {
-    const leaving = prev === "home" || prev === "socials" || prev === "project";
-    if (!leaving) return;
-    window.setTimeout(() => {
-      const box = target.getBoundingClientRect();
-      if (!box.height) return;
-      if (box.top >= 0 && box.bottom <= window.innerHeight - 8) return;
-      const top = Math.max(0, box.top + window.scrollY - 12);
-      window.scrollTo({ top, behavior });
-    }, 200);
-    return;
-  }
-  if (about) return;
+function revealMobileInfo() {
+  if (inAbout(view) || view === "socials") return;
   window.requestAnimationFrame(() => {
-    window.scrollTo({ top: 0, behavior });
+    window.scrollTo({ top: 0, behavior: motionOk ? "smooth" : "auto" });
   });
 }
 
@@ -900,11 +912,17 @@ function goTo(next) {
   const shouldFlip = motionOk && ((cardUp(prev) && next === "project") || (prev === "project" && cardUp(next)));
   const active = panel.querySelector(".card.is-on");
   const first = shouldFlip && active ? active.getBoundingClientRect() : null;
+  const slideOut = motionOk && window.innerWidth <= 980 && cardUp(prev) && inAbout(next);
+  const exitFrom = slideOut ? panel.getBoundingClientRect() : null;
   view = next;
   paint();
   if (view === "home" || view === "socials") scheduleAuto();
   else stopProgress();
-  if (window.innerWidth <= 980) revealMobileInfo(prev);
+  if (window.innerWidth <= 980) revealMobileInfo();
+  if (slideOut) {
+    runSlideOut(panel, exitFrom);
+    return;
+  }
   if (!first) return;
   if (closing) {
     runShrink(panel, first);

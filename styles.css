@@ -729,7 +729,12 @@ body[data-view="project"] .card {
 
 body[data-view="project"] .card.is-on { opacity: 1; }
 
-body[data-view="project"].is-project-sliding .panel { overflow: visible; }
+body[data-view="project"].is-project-sliding .panel { overflow: hidden; }
+
+body[data-view="project"].is-project-sliding .card {
+  border-radius: 0;
+  transition: none;
+}
 
 body.is-closing .col-right { overflow: visible; }
 
@@ -970,24 +975,46 @@ body[data-view="project"] .dots {
   #title { order: 1; text-align: center; }
   #role { order: 2; text-align: center; }
 
+  #title,
+  #role {
+    transition: opacity 0.35s ease, translate 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  body[data-view="socials"] #title,
+  body[data-view="socials"] #role {
+    opacity: 0;
+    translate: 0 -24px;
+    pointer-events: none;
+  }
+
   #social-row {
-    order: 10;
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    z-index: 5;
+    width: min(calc(100vw - 44px), 320px);
+    margin: 0;
+    padding: 0;
     justify-content: center;
-    width: min(100%, 300px);
-    margin: 10px auto 0;
-    padding-bottom: 6px;
+    transform: translate(-50%, -50%);
   }
 
   #social-row:not([hidden]) {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    justify-items: center;
-    gap: 12px;
+    grid-template-columns: repeat(3, 56px);
+    grid-auto-rows: 56px;
+    justify-content: center;
+    align-content: center;
+    gap: 28px;
   }
 
   #social-row[hidden] { display: none; }
 
-  body[data-view="socials"] .dots { display: none; }
+  body:not([data-view="socials"]) #social-row { display: none; }
+
+  body[data-view="socials"] { overflow-x: clip; }
+
+  body[data-view="socials"] .dots { visibility: hidden; }
 
   #note { order: 4; margin: 12px auto 0; text-align: center; }
 
@@ -1047,24 +1074,39 @@ body[data-view="project"] .dots {
   body[data-view="profile"] .panel,
   body[data-view="skills"] .panel,
   body[data-view="certs"] .panel,
-  body[data-view="stack"] .panel,
-  body[data-view="socials"] .panel {
+  body[data-view="stack"] .panel {
     order: 3;
     transform: translateX(105%);
     opacity: 0;
     height: 0;
     overflow: visible;
     pointer-events: none;
+    transition: none;
   }
 
-  body:is([data-view="profile"], [data-view="skills"], [data-view="certs"], [data-view="stack"]) :is(#title, #role, #lower, #more, .portrait) {
-    animation: infoIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+  body[data-view="socials"] .panel {
+    transform: translateX(115%);
+    opacity: 0;
+    pointer-events: none;
   }
 
-  body:is([data-view="profile"], [data-view="skills"], [data-view="certs"], [data-view="stack"]) #role { animation-delay: 0.06s; }
-  body:is([data-view="profile"], [data-view="skills"], [data-view="certs"], [data-view="stack"]) #lower { animation-delay: 0.12s; }
-  body:is([data-view="profile"], [data-view="skills"], [data-view="certs"], [data-view="stack"]) #more { animation-delay: 0.18s; }
-  body:is([data-view="profile"], [data-view="skills"], [data-view="certs"], [data-view="stack"]) .portrait { animation-delay: 0.24s; }
+  body[data-view="socials"] .card {
+    translate: none;
+    transition: none;
+  }
+
+  body:is([data-view="profile"], [data-view="skills"], [data-view="certs"], [data-view="stack"]) :where(#title, #role, .portrait, #lower .prose p, #more .links, #more .detail > *) {
+    animation: infoIn 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  body:is([data-view="profile"], [data-view="skills"], [data-view="certs"], [data-view="stack"]) #lower.fresh { animation: none; }
+
+  body:is([data-view="profile"], [data-view="skills"], [data-view="certs"], [data-view="stack"]) #role { animation-delay: 0.08s; }
+  body:is([data-view="profile"], [data-view="skills"], [data-view="certs"], [data-view="stack"]) #lower .prose p:nth-child(1) { animation-delay: 0.16s; }
+  body:is([data-view="profile"], [data-view="skills"], [data-view="certs"], [data-view="stack"]) #lower .prose p:nth-child(2) { animation-delay: 0.24s; }
+  body:is([data-view="profile"], [data-view="skills"], [data-view="certs"], [data-view="stack"]) #more .links { animation-delay: 0.3s; }
+  body:is([data-view="profile"], [data-view="skills"], [data-view="certs"], [data-view="stack"]) #more .detail > * { animation-delay: 0.36s; }
+  body:is([data-view="profile"], [data-view="skills"], [data-view="certs"], [data-view="stack"]) .portrait { animation-delay: 0.44s; }
 
   body[data-view="profile"] #actions,
   body[data-view="skills"] #actions,
