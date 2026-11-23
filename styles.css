@@ -119,6 +119,16 @@ button, a, label, summary, input, textarea, select {
   transition: padding-top 0.9s cubic-bezier(0.7, 0, 0.2, 1);
 }
 
+@media (min-width: 981px) {
+  body[data-view="project"] .col-left {
+    justify-content: center;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+
+  body[data-view="project"] .lower { display: none; }
+}
+
 .identity,
 .lower { max-width: 700px; }
 
@@ -197,7 +207,6 @@ body[data-view="project"] .actions { margin-top: 28px; }
   height: 26px;
   border-radius: 6px;
   object-fit: contain;
-  filter: grayscale(1) contrast(1.35);
 }
 
 .icon-btn:hover {
@@ -360,6 +369,32 @@ body[data-view="stack"] .lower {
 .prose strong {
   color: var(--ink);
   font-weight: 650;
+}
+
+.prose-link {
+  position: relative;
+  color: var(--ink);
+  font-weight: 650;
+  text-decoration: none;
+  padding-bottom: 2px;
+  background-image: linear-gradient(currentColor, currentColor);
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 0 2px;
+  transition: background-size 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.prose-link:hover,
+.prose-link:focus-visible {
+  background-size: 100% 2px;
+}
+
+.prose-link .tip { display: none; }
+
+.prose-link:focus-visible .tip {
+  display: block;
+  opacity: 1;
+  translate: -50% 0;
 }
 
 .links {
@@ -894,6 +929,11 @@ body[data-view="project"] .dots {
   to { opacity: 1; transform: none; }
 }
 
+@keyframes infoIn {
+  from { opacity: 0; translate: 0 20px; }
+  to { opacity: 1; translate: 0 0; }
+}
+
 @keyframes fade {
   from { opacity: 0; }
   to { opacity: 1; }
@@ -916,7 +956,7 @@ body[data-view="project"] .dots {
     align-items: stretch;
     min-height: 100vh;
     min-height: 100dvh;
-    padding: calc(84px + env(safe-area-inset-top)) max(22px, env(safe-area-inset-right)) calc(18px + env(safe-area-inset-bottom)) max(22px, env(safe-area-inset-left));
+    padding: calc(84px + env(safe-area-inset-top)) max(22px, env(safe-area-inset-right)) calc(104px + env(safe-area-inset-bottom)) max(22px, env(safe-area-inset-left));
     gap: 14px;
   }
 
@@ -933,9 +973,21 @@ body[data-view="project"] .dots {
   #social-row {
     order: 10;
     justify-content: center;
-    margin: 2px auto 0;
+    width: min(100%, 300px);
+    margin: 10px auto 0;
     padding-bottom: 6px;
   }
+
+  #social-row:not([hidden]) {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    justify-items: center;
+    gap: 12px;
+  }
+
+  #social-row[hidden] { display: none; }
+
+  body[data-view="socials"] .dots { display: none; }
 
   #note { order: 4; margin: 12px auto 0; text-align: center; }
 
@@ -963,10 +1015,19 @@ body[data-view="project"] .dots {
   }
 
   #actions {
-    order: 9;
-    margin: auto auto 0;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 6;
+    margin: 0 auto;
+    padding: 16px max(22px, env(safe-area-inset-right)) calc(16px + env(safe-area-inset-bottom)) max(22px, env(safe-area-inset-left));
     justify-content: center;
+    background: linear-gradient(to top, var(--paper) 58%, rgba(243, 243, 244, 0));
+    pointer-events: none;
   }
+
+  #actions > * { pointer-events: auto; }
 
   body[data-view="project"] .col-right {
     order: 1;
@@ -986,11 +1047,24 @@ body[data-view="project"] .dots {
   body[data-view="profile"] .panel,
   body[data-view="skills"] .panel,
   body[data-view="certs"] .panel,
-  body[data-view="stack"] .panel {
+  body[data-view="stack"] .panel,
+  body[data-view="socials"] .panel {
     order: 3;
-    transform: none;
-    pointer-events: auto;
+    transform: translateX(105%);
+    opacity: 0;
+    height: 0;
+    overflow: visible;
+    pointer-events: none;
   }
+
+  body:is([data-view="profile"], [data-view="skills"], [data-view="certs"], [data-view="stack"]) :is(#title, #role, #lower, #more, .portrait) {
+    animation: infoIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  body:is([data-view="profile"], [data-view="skills"], [data-view="certs"], [data-view="stack"]) #role { animation-delay: 0.06s; }
+  body:is([data-view="profile"], [data-view="skills"], [data-view="certs"], [data-view="stack"]) #lower { animation-delay: 0.12s; }
+  body:is([data-view="profile"], [data-view="skills"], [data-view="certs"], [data-view="stack"]) #more { animation-delay: 0.18s; }
+  body:is([data-view="profile"], [data-view="skills"], [data-view="certs"], [data-view="stack"]) .portrait { animation-delay: 0.24s; }
 
   body[data-view="profile"] #actions,
   body[data-view="skills"] #actions,
@@ -1023,6 +1097,7 @@ body[data-view="project"] .dots {
     aspect-ratio: auto;
     margin-left: calc(50% - 50vw);
     margin-right: calc(50% - 50vw);
+    transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease, height 0.55s cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   body[data-view="home"] .card,

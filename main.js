@@ -3,7 +3,7 @@ const copy = {
     language: "Language",
     major: "Computer Science",
     profileA:
-      "Undergrad in Computer Science at <strong>California State University San Marcos</strong>, also completing <strong>Harvard's Cybersecurity for Business</strong> program.",
+      'Undergrad in Computer Science at <a class="prose-link" href="https://maps.app.goo.gl/QrTyyX34rBrLbPry9" target="_blank" rel="noopener noreferrer">California State University San Marcos<span class="tip">Visit school</span></a>, also completing <a class="prose-link" href="https://harvardonline.harvard.edu/course/cybersecurity-managing-risk-information-age" target="_blank" rel="noopener noreferrer">Harvard&#39;s Cybersecurity for Business<span class="tip">Visit course</span></a> program.',
     profileB: "Strong work ethic, problem solving, and active outside class.",
     skills: "Skills",
     certs: "Certificates",
@@ -35,7 +35,7 @@ const copy = {
     language: "Idioma",
     major: "Ciencias de la Computación",
     profileA:
-      "Estudiante de Ciencias de la Computación en <strong>California State University San Marcos</strong>, también completando el programa <strong>Cybersecurity for Business de Harvard</strong>.",
+      'Estudiante de Ciencias de la Computación en <a class="prose-link" href="https://maps.app.goo.gl/QrTyyX34rBrLbPry9" target="_blank" rel="noopener noreferrer">California State University San Marcos<span class="tip">Visitar escuela</span></a>, también completando el programa <a class="prose-link" href="https://harvardonline.harvard.edu/course/cybersecurity-managing-risk-information-age" target="_blank" rel="noopener noreferrer">Cybersecurity for Business de Harvard<span class="tip">Visitar curso</span></a>.',
     profileB: "Fuerte ética de trabajo, resolución de problemas y participación fuera de clase.",
     skills: "Habilidades",
     certs: "Certificados",
@@ -208,7 +208,7 @@ const socials = [
   { href: "https://open.spotify.com/user/31bkbmqthacfrfchjncyj2kpvase", en: "Spotify", es: "Spotify", src: "assets/socials/spotify.webp" },
   { href: "https://namemc.com/Delexo", en: "NameMC", es: "NameMC", src: "assets/socials/namemc.svg" },
   { href: "https://gdbrowser.com/u/vans", en: "GDBrowser", es: "GDBrowser", src: "assets/socials/gdbrowser.png" },
-  { href: stripeHref, en: "Donate", es: "Donar", src: "assets/socials/donate.svg" },
+  { href: stripeHref, en: "Donate", es: "Donar", src: "assets/socials/donate.svg?v=2" },
 ];
 
 const githubMark = '<svg class="github-mark" viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>';
@@ -537,6 +537,7 @@ function placeDeck(wrapDirection) {
     return;
   }
   if (!browsing && !inAbout(view)) return;
+  if (window.innerWidth <= 980 && (inAbout(view) || view === "socials")) return;
   if (wrapBusy && !wrapDirection) return;
   const card = cards.find((item) => !item.hasAttribute("data-clone")) || cards[0];
   if (!card) return;
@@ -864,21 +865,20 @@ function runShrink(panel, first) {
 function revealMobileInfo(prev) {
   const behavior = motionOk ? "smooth" : "auto";
   const about = inAbout(view);
-  const target = view === "socials"
-    ? document.getElementById("social-row")
-    : about ? document.getElementById("actions") : null;
+  const target = view === "socials" ? document.getElementById("social-row") : null;
   if (target) {
     const leaving = prev === "home" || prev === "socials" || prev === "project";
     if (!leaving) return;
     window.setTimeout(() => {
       const box = target.getBoundingClientRect();
       if (!box.height) return;
-      if (!about && box.top >= 0 && box.bottom <= window.innerHeight - 8) return;
+      if (box.top >= 0 && box.bottom <= window.innerHeight - 8) return;
       const top = Math.max(0, box.top + window.scrollY - 12);
       window.scrollTo({ top, behavior });
     }, 200);
     return;
   }
+  if (about) return;
   window.requestAnimationFrame(() => {
     window.scrollTo({ top: 0, behavior });
   });
@@ -1148,10 +1148,12 @@ function bindCursor() {
   let ty = 0;
   let active = false;
   let overCard = false;
+  let linkTip = "";
   const placeVisit = () => {
     if (!visit) return;
-    visit.textContent = copy[lang].visit;
-    const show = overCard && (view === "home" || view === "socials");
+    const label = overCard && (view === "home" || view === "socials") ? copy[lang].visit : linkTip;
+    if (visit.textContent !== label) visit.textContent = label;
+    const show = !!label;
     visit.hidden = false;
     visit.classList.toggle("is-on", show);
     if (!show) return;
@@ -1176,6 +1178,9 @@ function bindCursor() {
     ty = event.clientY;
     const card = event.target.closest && event.target.closest(".card.is-on");
     overCard = !!(card && !card.hasAttribute("data-clone"));
+    const link = event.target.closest && event.target.closest(".prose-link");
+    const linkTipEl = link ? link.querySelector(".tip") : null;
+    linkTip = linkTipEl ? linkTipEl.textContent : "";
     if (active) return;
     x = tx;
     y = ty;
@@ -1185,6 +1190,7 @@ function bindCursor() {
   document.addEventListener("pointerleave", () => {
     active = false;
     overCard = false;
+    linkTip = "";
     cursor.classList.remove("is-on");
   });
   const tick = () => {
