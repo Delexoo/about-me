@@ -210,8 +210,10 @@ body.is-closing .card:not(.is-on) { visibility: hidden; }
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 18px 44px rgba(0, 0, 0, 0.18);
-  transition: top 0.98s var(--ease), width 0.98s var(--ease);
+  transition: width 0.98s var(--ease);
 }
+
+body.is-flipping .card { transition: none; will-change: transform; }
 
 body[data-view="project"] .browser {
   top: 50%;

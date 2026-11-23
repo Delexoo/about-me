@@ -55,6 +55,7 @@ function runFlip(panel, first) {
   const sy = first.height / last.height;
   if (Math.abs(dx) < 1 && Math.abs(dy) < 1 && Math.abs(sx - 1) < 0.02 && Math.abs(sy - 1) < 0.02) return;
   panel.getAnimations().forEach((anim) => anim.cancel());
+  document.body.classList.add("is-flipping");
   panel.style.transformOrigin = "top left";
   const anim = panel.animate(
     [
@@ -63,7 +64,10 @@ function runFlip(panel, first) {
     ],
     { duration: 980, easing: "cubic-bezier(0.22, 1, 0.36, 1)" }
   );
-  const clear = () => { panel.style.transformOrigin = ""; };
+  const clear = () => {
+    panel.style.transformOrigin = "";
+    document.body.classList.remove("is-flipping");
+  };
   anim.onfinish = clear;
   anim.oncancel = clear;
 }
