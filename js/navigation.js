@@ -53,8 +53,15 @@ function goTo(next) {
     }, slideMs + 20);
     return;
   }
+  const returning = prev === "project" && cardUp(next);
+  const col = returning ? document.querySelector(".col-left") : null;
+  if (col) col.style.transition = "none";
   view = next;
   paint();
+  if (col) {
+    void col.offsetWidth;
+    col.style.transition = "";
+  }
   if (view === "home") scheduleAuto();
   else stopProgress();
   if (window.innerWidth <= 980) revealMobileInfo();
