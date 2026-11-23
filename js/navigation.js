@@ -55,7 +55,7 @@ function goTo(next) {
   }
   view = next;
   paint();
-  if (view === "home" || view === "socials") scheduleAuto();
+  if (view === "home") scheduleAuto();
   else stopProgress();
   if (window.innerWidth <= 980) revealMobileInfo();
   if (!first) return;

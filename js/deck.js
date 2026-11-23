@@ -154,7 +154,7 @@ function scheduleAuto() {
     progressAnim.cancel();
     progressAnim = null;
   }
-  if (!motionOk || autoHold || discordOpen || (view !== "home" && view !== "socials")) return;
+  if (!motionOk || autoHold || discordOpen || view !== "home") return;
   autoTimer = window.setTimeout(() => { sliding = false; }, motionOk ? 280 : 0);
   fillTimer = window.setTimeout(() => {
     if (!autoHold && !sliding) armAuto();
@@ -162,7 +162,7 @@ function scheduleAuto() {
 }
 
 function armAuto() {
-  if (!motionOk || autoHold || discordOpen || (view !== "home" && view !== "socials")) return;
+  if (!motionOk || autoHold || discordOpen || view !== "home") return;
   const el = document.getElementById("dots");
   const fill = el && el.querySelector(".dot.is-on .pip-fill");
   if (!fill) return;
@@ -174,7 +174,7 @@ function armAuto() {
   progressAnim = fill.animate(frames, { duration: AUTO_MS, easing: "linear", fill: "forwards" });
   progressAnim.onfinish = () => {
     progressAnim = null;
-    if (autoHold || discordOpen || (view !== "home" && view !== "socials")) return;
+    if (autoHold || discordOpen || view !== "home") return;
     stepProjects(1);
   };
 }
