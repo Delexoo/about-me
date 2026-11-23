@@ -53,8 +53,8 @@ function goTo(next) {
     }, slideMs + 20);
     return;
   }
-  const returning = prev === "project" && cardUp(next);
-  const col = returning ? document.querySelector(".col-left") : null;
+  const stepping = (prev === "project" && cardUp(next)) || (cardUp(prev) && next === "project");
+  const col = stepping ? document.querySelector(".col-left") : null;
   if (col) col.style.transition = "none";
   view = next;
   paint();
