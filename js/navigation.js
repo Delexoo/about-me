@@ -56,6 +56,8 @@ function goTo(next) {
   const stepping = (prev === "project" && cardUp(next)) || (cardUp(prev) && next === "project");
   const col = stepping ? document.querySelector(".col-left") : null;
   if (col) col.style.transition = "none";
+  if (closing) document.body.classList.add("is-closing");
+  else if (shouldFlip) document.body.classList.add("is-flipping");
   view = next;
   paint();
   if (col) {
@@ -65,13 +67,16 @@ function goTo(next) {
   if (view === "home") scheduleAuto();
   else stopProgress();
   if (window.innerWidth <= 980) revealMobileInfo();
-  if (!first) return;
+  if (!first) {
+    document.body.classList.remove("is-closing", "is-flipping");
+    return;
+  }
   if (closing) {
-    runShrink(panel, first);
+    if (!runShrink(panel, first)) document.body.classList.remove("is-closing");
     return;
   }
   const current = panel.querySelector(".card.is-on");
-  if (current) runFlip(current, first);
+  if (!current || !runFlip(current, first)) document.body.classList.remove("is-flipping");
 }
 
 function setLang(next) {

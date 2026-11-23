@@ -53,7 +53,7 @@ function runFlip(panel, first) {
   const dy = first.top - last.top;
   const sx = first.width / last.width;
   const sy = first.height / last.height;
-  if (Math.abs(dx) < 1 && Math.abs(dy) < 1 && Math.abs(sx - 1) < 0.02 && Math.abs(sy - 1) < 0.02) return;
+  if (Math.abs(dx) < 1 && Math.abs(dy) < 1 && Math.abs(sx - 1) < 0.02 && Math.abs(sy - 1) < 0.02) return null;
   panel.getAnimations().forEach((anim) => anim.cancel());
   document.body.classList.add("is-flipping");
   panel.style.transformOrigin = "top left";
@@ -70,6 +70,7 @@ function runFlip(panel, first) {
   };
   anim.onfinish = clear;
   anim.oncancel = clear;
+  return anim;
 }
 
 function runSlideOut(panel, first, duration) {
@@ -103,10 +104,10 @@ function runSlideOut(panel, first, duration) {
 
 function runShrink(panel, first) {
   const card = panel.querySelector(".card.is-on");
-  if (!card) return;
+  if (!card) return null;
   const last = card.getBoundingClientRect();
   const box = panel.getBoundingClientRect();
-  if (!first.width || !last.width || !box.width) return;
+  if (!first.width || !last.width || !box.width) return null;
   const scale = first.width / last.width;
   const dx = first.left + first.width / 2 - (last.left + last.width / 2);
   const dy = first.top + first.height / 2 - (last.top + last.height / 2);
@@ -114,7 +115,7 @@ function runShrink(panel, first) {
   const cy = last.top + last.height / 2 - (box.top + box.height / 2);
   const tx = dx + (1 - scale) * cx;
   const ty = dy + (1 - scale) * cy;
-  if (Math.abs(tx) < 1 && Math.abs(ty) < 1 && Math.abs(scale - 1) < 0.005) return;
+  if (Math.abs(tx) < 1 && Math.abs(ty) < 1 && Math.abs(scale - 1) < 0.005) return null;
   panel.getAnimations().forEach((anim) => anim.cancel());
   panel.style.transformOrigin = "center";
   document.body.classList.add("is-closing");
@@ -131,6 +132,7 @@ function runShrink(panel, first) {
   };
   anim.onfinish = clear;
   anim.oncancel = clear;
+  return anim;
 }
 
 function revealMobileInfo() {

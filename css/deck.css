@@ -159,6 +159,19 @@ body.is-closing .col-right { overflow: visible; }
 
 body.is-closing .card:not(.is-on) { visibility: hidden; }
 
+body.is-flipping .card:not(.is-on) { visibility: hidden; }
+
+body.is-flipping .panel,
+body.is-closing .panel { contain: paint; }
+
+body.is-flipping .card,
+body.is-closing .card { transition: none; }
+
+body.is-flipping .browser,
+body.is-flipping .browser img,
+body.is-closing .browser,
+body.is-closing .browser img { transition: none; }
+
 .wash {
   position: absolute;
   inset: 0;
@@ -212,8 +225,6 @@ body.is-closing .card:not(.is-on) { visibility: hidden; }
   box-shadow: 0 18px 44px rgba(0, 0, 0, 0.18);
   transition: width 0.98s var(--ease);
 }
-
-body.is-flipping .card { transition: none; will-change: transform; }
 
 body[data-view="project"] .browser {
   top: 50%;
