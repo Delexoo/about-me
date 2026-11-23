@@ -1,0 +1,345 @@
+/* Delexo deck: the panel, portrait, project cards, browser frames and dots. */
+.col-right {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: stretch;
+  height: 100vh;
+  height: 100dvh;
+  min-height: 100vh;
+  min-height: 100dvh;
+  margin-right: -64px;
+  padding-right: 64px;
+  overflow: hidden;
+  transition: transform 0.75s var(--ease);
+}
+
+body[data-view="profile"] .col-right,
+body[data-view="skills"] .col-right,
+body[data-view="certs"] .col-right,
+body[data-view="stack"] .col-right {
+  overflow: hidden;
+}
+
+body[data-view="profile"] .panel,
+body[data-view="skills"] .panel,
+body[data-view="certs"] .panel,
+body[data-view="stack"] .panel {
+  transform: translateX(72vw);
+  pointer-events: none;
+}
+
+body[data-view="project"] .col-right {
+  overflow: visible;
+  align-items: center;
+  justify-content: center;
+  padding-top: 0;
+}
+
+.panel {
+  position: relative;
+  align-self: stretch;
+  width: min(600px, calc(100vh - 200px), 100%);
+  width: min(600px, calc(100dvh - 200px), 100%);
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
+  background: none;
+  box-shadow: none;
+  border-radius: 0;
+  transition: transform 1.2s cubic-bezier(0.7, 0, 0.2, 1);
+}
+
+.portrait {
+  position: absolute;
+  z-index: 2;
+  top: 50%;
+  left: 50%;
+  width: min(600px, calc(100dvh - 200px), 100%);
+  aspect-ratio: 1;
+  margin: 0;
+  border-radius: 28px;
+  overflow: hidden;
+  pointer-events: none;
+  opacity: 1;
+  transform: translate(calc(-50% + 72vw), -50%);
+  transition: transform 1.2s cubic-bezier(0.7, 0, 0.2, 1);
+}
+
+.portrait img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 22%;
+}
+
+body[data-view="profile"] .portrait,
+body[data-view="skills"] .portrait,
+body[data-view="certs"] .portrait,
+body[data-view="stack"] .portrait {
+  opacity: 1;
+  transform: translate(-50%, -50%);
+  pointer-events: auto;
+}
+
+.panel:empty { visibility: hidden; }
+
+body[data-view="project"] .panel {
+  width: min(820px, calc(100dvh - 160px), 100%);
+  height: auto;
+  aspect-ratio: 1;
+  border-radius: 28px;
+  align-self: center;
+}
+
+.deck {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.7s var(--ease);
+}
+
+body[data-view="project"] .deck {
+  inset: 0;
+  transition: none;
+}
+
+.card {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  flex: 0 0 auto;
+  border: 0;
+  border-radius: 28px;
+  overflow: visible;
+  padding: 0;
+  background: var(--wash, #eceae6);
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  box-shadow: none;
+  transition: translate 0.45s var(--ease), scale 0.2s var(--ease);
+}
+
+body[data-view="home"] .card.is-on:hover,
+body[data-view="socials"] .card.is-on:hover {
+  translate: 0 -4px;
+}
+
+body[data-view="home"] .card.is-on:active,
+body[data-view="socials"] .card.is-on:active { scale: 0.985; }
+
+body[data-view="project"] .card {
+  position: absolute;
+  inset: 0;
+  width: auto;
+  height: auto;
+  aspect-ratio: auto;
+  opacity: 0;
+  pointer-events: none;
+  box-shadow: none;
+}
+
+body[data-view="project"] .card.is-on { opacity: 1; }
+
+body[data-view="project"].is-project-sliding .panel { overflow: hidden; }
+
+body[data-view="project"].is-project-sliding .card {
+  border-radius: 0;
+  transition: none;
+}
+
+body.is-closing .col-right { overflow: visible; }
+
+body.is-closing .card:not(.is-on) { visibility: hidden; }
+
+.wash {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  overflow: hidden;
+  background: var(--wash);
+}
+
+.panel-body {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  overflow: hidden;
+}
+
+.visit-tip {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 35;
+  padding: 8px 12px;
+  background: #111;
+  color: #fff;
+  font-size: 12px;
+  line-height: 1;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  border-radius: 0 999px 999px 999px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s var(--ease);
+}
+
+.visit-tip.is-on { opacity: 1; }
+
+.visit-tip[data-corner="tr"] { border-radius: 999px 0 999px 999px; }
+
+.visit-tip[data-corner="bl"] { border-radius: 999px 999px 999px 0; }
+
+.visit-tip[data-corner="br"] { border-radius: 999px 999px 0 999px; }
+
+.browser {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 82%;
+  translate: -50% -50%;
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.18);
+  transition: top 0.98s var(--ease), width 0.98s var(--ease);
+}
+
+body[data-view="project"] .browser {
+  top: 50%;
+  width: 86%;
+}
+
+.browser-bar {
+  height: 28px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0 10px;
+  background: #f7f7f7;
+  border-bottom: 1px solid #eee;
+}
+
+.browser-bar i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #e2e2e2;
+  display: block;
+}
+
+.browser-bar span {
+  margin-left: 8px;
+  min-width: 0;
+  font-size: 11px;
+  color: #b0b0b0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.browser img {
+  display: block;
+  width: 100%;
+  height: 280px;
+  object-fit: cover;
+  object-position: center 42%;
+  background: #fafafa;
+  transition: height 0.98s var(--ease);
+}
+
+body[data-view="project"] .browser img { height: min(50vh, 460px); }
+
+.card.no-shot .browser { display: none; }
+
+.card-name {
+  position: absolute;
+  left: 26px;
+  bottom: 22px;
+  margin: 0;
+  color: #fff;
+  font-size: 30px;
+  font-weight: 600;
+  letter-spacing: -0.035em;
+  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.28);
+  transition: opacity 0.3s var(--ease);
+}
+
+body[data-view="project"] .card-name { opacity: 0; }
+
+.dots {
+  --dot-size: 22px;
+  --dot-gap: 10px;
+  --dot-mark: 3px;
+  position: fixed;
+  right: 18px;
+  top: 50%;
+  translate: 0 -50%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--dot-gap);
+  z-index: 3;
+  transition: opacity 0.4s var(--ease);
+}
+
+body[data-view="profile"] .dots,
+body[data-view="skills"] .dots,
+body[data-view="certs"] .dots,
+body[data-view="stack"] .dots,
+body[data-view="project"] .dots {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.dot {
+  width: var(--dot-size);
+  height: var(--dot-size);
+  border: 0;
+  padding: 0;
+  background: transparent;
+  display: grid;
+  place-items: center;
+}
+
+.pip {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: #d5d5d5;
+  overflow: hidden;
+  pointer-events: none;
+  transition: width 0.55s var(--ease), height 0.55s var(--ease);
+}
+
+.dot.is-on .pip { height: 22px; }
+
+.pip-fill {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: #1a1a1a;
+  transform: scaleY(0);
+  transform-origin: top center;
+}
+
+.is-booting h1,
+.is-booting .role,
+.is-booting .actions {
+  animation: rise 0.8s var(--ease) both;
+}
+
+.is-booting .role { animation-delay: 0.08s; }
+.is-booting .actions { animation-delay: 0.16s; }
+
+.is-booting .card.is-on {
+  animation: fade 0.8s var(--ease) both;
+}
+

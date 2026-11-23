@@ -1,0 +1,153 @@
+/* Delexo base: design tokens, reset, cursor and the stage shell. */
+:root {
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --ink: #1c1c1c;
+  --muted: #b3b3b3;
+  --prose: #9a9a9a;
+  --paper: #f3f3f4;
+  --btn: #8a8a8a;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  scrollbar-width: none;
+}
+
+html {
+  overflow-x: clip;
+  -webkit-text-size-adjust: 100%;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+}
+
+body {
+  min-height: 100vh;
+  min-height: 100dvh;
+  overflow-x: clip;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+button, a, label, summary, input, textarea, select {
+  cursor: inherit;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  html, body, button, a, label, summary, input, textarea, select {
+    cursor: none;
+  }
+}
+
+.cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 40;
+  width: 32px;
+  height: 32px;
+  pointer-events: none;
+  opacity: 0;
+}
+
+.cursor.is-on { opacity: 1; }
+
+.cursor svg { display: block; width: 32px; height: 32px; }
+
+.icon-btn, .dot, .lang button, .links button { user-select: none; }
+
+:focus { outline: none; }
+
+:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+}
+
+.lang {
+  position: fixed;
+  top: 26px;
+  right: 28px;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+}
+
+.lang button {
+  border: 0;
+  background: none;
+  color: #c8c8c8;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  padding: 6px 4px;
+}
+
+.lang button.is-on { color: var(--ink); }
+
+.lang span { color: #ddd; }
+
+.stage {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: grid;
+  grid-template-columns: minmax(280px, 0.92fr) minmax(320px, 1.12fr);
+  column-gap: 40px;
+  padding: 0 64px 0 10vw;
+  align-items: center;
+}
+
+.col-left {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  padding-top: calc(50vh - 148px);
+  padding-bottom: 8vh;
+  padding-left: clamp(36px, 4vw, 72px);
+  transition: padding-top 0.9s cubic-bezier(0.7, 0, 0.2, 1);
+}
+
+@media (min-width: 981px) {
+  body[data-view="project"] .col-left {
+    justify-content: center;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+
+  body[data-view="project"] .lower { display: none; }
+}
+
+.identity,
+.lower { max-width: 700px; }
+
+h1, .role {
+  margin: 0;
+  font-size: clamp(42px, 3.8vw, 56px);
+  line-height: 1.08;
+  letter-spacing: -0.045em;
+  font-weight: 600;
+}
+
+.role {
+  margin-top: 2px;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+h1.swap, .role.swap {
+  animation: rise 0.5s var(--ease) both;
+}
+

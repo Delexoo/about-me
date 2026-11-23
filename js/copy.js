@@ -1,0 +1,68 @@
+// Delexo copy: every English and Spanish interface string.
+const copy = {
+  en: {
+    language: "Language",
+    major: "Computer Science",
+    profileA:
+      'Undergrad in Computer Science at <a class="prose-link prose-link--discord" href="https://maps.app.goo.gl/QrTyyX34rBrLbPry9" target="_blank" rel="noopener noreferrer">California State University San Marcos<span class="tip">Visit school</span></a>, also completing <a class="prose-link prose-link--crimson" href="https://harvardonline.harvard.edu/course/cybersecurity-managing-risk-information-age" target="_blank" rel="noopener noreferrer">Harvard&#39;s Cybersecurity for Business<span class="tip">Visit course</span></a> program.',
+    profileB: "Strong work ethic, problem solving, and active outside class.",
+    skills: "Skills",
+    certs: "Certificates",
+    stack: "Stack",
+    skillItems: [
+      "Attention to detail",
+      "Problem solving",
+      "Quick learner",
+      "Customer service and cash handling",
+      "Computer science and cybersecurity internship",
+    ],
+    certItems: [
+      "Harvard CS50",
+      "Google Cybersecurity",
+      "Harvard Cybersecurity for Business",
+    ],
+    profile: "Profile",
+    socials: "Links",
+    support: "Support",
+    back: "Back",
+    close: "Close",
+    open: "Open site",
+    visit: "View project",
+    discordRequest: "<strong>delexo</strong> sent you a friend request.",
+    discordAccept: "Accept",
+    discordIgnore: "Ignore",
+  },
+  es: {
+    language: "Idioma",
+    major: "Ciencias de la Computación",
+    profileA:
+      'Estudiante de Ciencias de la Computación en <a class="prose-link prose-link--discord" href="https://maps.app.goo.gl/QrTyyX34rBrLbPry9" target="_blank" rel="noopener noreferrer">California State University San Marcos<span class="tip">Visitar escuela</span></a>, también completando el programa <a class="prose-link prose-link--crimson" href="https://harvardonline.harvard.edu/course/cybersecurity-managing-risk-information-age" target="_blank" rel="noopener noreferrer">Cybersecurity for Business de Harvard<span class="tip">Visitar curso</span></a>.',
+    profileB: "Fuerte ética de trabajo, resolución de problemas y participación fuera de clase.",
+    skills: "Habilidades",
+    certs: "Certificados",
+    stack: "Stack",
+    skillItems: [
+      "Atención al detalle",
+      "Resolución de problemas",
+      "Aprendo rápido",
+      "Atención al cliente y manejo de efectivo",
+      "Pasantía en informática y ciberseguridad",
+    ],
+    certItems: [
+      "CS50 de Harvard",
+      "Ciberseguridad de Google",
+      "Cybersecurity for Business de Harvard",
+    ],
+    profile: "Perfil",
+    socials: "Enlaces",
+    support: "Apoyo",
+    back: "Volver",
+    close: "Cerrar",
+    open: "Abrir sitio",
+    visit: "Ver proyecto",
+    discordRequest: "<strong>delexo</strong> te envió una solicitud de amistad.",
+    discordAccept: "Aceptar",
+    discordIgnore: "Ignorar",
+  },
+};
+

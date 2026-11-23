@@ -1,0 +1,228 @@
+/* Delexo discord: the profile card dialog. */
+.discord-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+}
+
+.discord-modal[hidden] { display: none; }
+
+.discord-modal.is-open {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.discord-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  padding: 0;
+  background: rgba(0, 0, 0, 0.55);
+}
+
+.discord-modal__panel {
+  position: relative;
+  z-index: 1;
+  width: min(340px, calc(100% - 32px));
+  border-radius: 12px;
+  overflow: hidden;
+  background: #111214;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.45);
+  transform: translateY(10px) scale(0.98);
+  transition: transform 0.22s var(--ease);
+}
+
+.discord-modal.is-open .discord-modal__panel { transform: none; }
+
+.discord-modal__close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.35);
+  color: #dbdee1;
+}
+
+.discord-modal__close:hover,
+.discord-modal__close:focus-visible {
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+}
+
+.discord-profile__banner {
+  height: 100px;
+  background: #80848e;
+}
+
+.discord-profile__body {
+  position: relative;
+  padding: 52px 16px 16px;
+  background: #111214;
+  text-align: left;
+}
+
+.discord-profile__avatar-wrap {
+  position: absolute;
+  left: 16px;
+  top: 0;
+  z-index: 2;
+  width: 80px;
+  height: 80px;
+  transform: translateY(-50%);
+}
+
+.discord-profile__avatar {
+  display: block;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: 6px solid #111214;
+  background: #1e1f22;
+  object-fit: cover;
+}
+
+.discord-profile__status {
+  position: absolute;
+  right: 2px;
+  bottom: 2px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 4px solid #111214;
+  box-sizing: border-box;
+}
+
+.discord-profile__status--dnd {
+  background:
+    linear-gradient(#111214, #111214) center / 10px 3px no-repeat,
+    #f23f43;
+}
+
+.discord-profile__display {
+  margin: 0 0 4px;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  color: #f2f3f5;
+}
+
+.discord-profile__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 8px;
+  margin-bottom: 14px;
+}
+
+.discord-profile__username {
+  font-size: 14px;
+  font-weight: 500;
+  color: #b5bac1;
+}
+
+.discord-profile__dot {
+  color: #4e5058;
+  font-size: 12px;
+  line-height: 1;
+}
+
+.discord-profile__badges {
+  list-style: none;
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+}
+
+.discord-profile__badges img {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+  display: block;
+}
+
+.discord-profile__ai {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 22px;
+  padding: 0 7px 0 5px;
+  border-radius: 999px;
+  background: #1e1f22;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+  color: #f2f3f5;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  line-height: 1;
+}
+
+.discord-profile__ai-icon { display: block; }
+
+.discord-request {
+  padding: 12px;
+  border-radius: 8px;
+  background: #2b2d31;
+}
+
+.discord-request__text {
+  margin: 0 0 12px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.35;
+  color: #dbdee1;
+}
+
+.discord-request__text strong {
+  font-weight: 700;
+  color: #f2f3f5;
+}
+
+.discord-request__actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.discord-request__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 36px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 8px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.discord-request__btn--accept { background: #5865f2; }
+.discord-request__btn--accept:hover,
+.discord-request__btn--accept:focus-visible { background: #4752c4; }
+
+.discord-request__btn--ignore { background: #4e5058; }
+.discord-request__btn--ignore:hover,
+.discord-request__btn--ignore:focus-visible { background: #6d6f78; }
+
+html.discord-open,
+html.discord-open body { overflow: hidden; }
