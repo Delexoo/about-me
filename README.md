@@ -2,7 +2,7 @@
 
 # Delexo
 
-**A quiet, typographic portfolio for the things I build, and the project deck that holds them.**
+**Just a simple portfolio.**
 
 [**Live site → delexo.store**](https://delexo.store)
 
@@ -20,32 +20,35 @@
 
 ## Overview
 
-A single-page personal site built with plain HTML, CSS and JavaScript, no framework, no build step, no dependencies.
+A single-page personal site built with plain HTML, CSS and JavaScript — no framework, no build step, no dependencies.
 
-The home screen is an infinite deck of projects. Opening one expands it into a case view with the write-up, the stack, the live link and a repository link. The profile and links views live on the same stage: the deck slides aside instead of the page changing abruptly, and every transition is CSS or Web Animations, nothing loads between views.
+The home screen is an infinite deck of projects. Opening one expands it into a case view with the write-up, short tags, and live / repo links. Profile and Links live on the same stage: the deck slides aside, and every transition is CSS or Web Animations.
 
-The whole site is bilingual (English / Spanish) and remembers your choice, works from 320 px phones up to wide desktops, and respects `prefers-reduced-motion`.
+Profile content (skills, certificates, stack, and an app-style project list) sits in expandable dropdowns under the bio. The whole site is bilingual (English / Spanish), remembers your language choice, works from phones to wide desktops, and respects `prefers-reduced-motion`.
 
 ## Projects
 
 | | Project | What it is |
 |---|---|---|
-| 01 | **Mochi** | A Windows AI assistant that docks to the edge of the desktop: chat, music, voice and file actions, local-first. |
-| 02 | **Moonrise** | One-click AI websites for local businesses, with a built-in checkout for selling them. |
-| 03 | **OrbINT** | An open-source reconnaissance casebook that keeps scattered identifiers in one local case file. |
-| 04 | **MusicWidget** | A 4 MB always-on-top music player for Windows with plain-folder playlists. |
-| 05 | **GitReplay** | Replays any GitHub repository character by character, with a live HTML/CSS/JS preview. |
+| 01 | **Mochi** | A Windows AI assistant that docks to the desktop edge: chat, music, voice and file actions, local-first. |
+| 02 | **Moonrise** | One-click AI websites for local businesses, with built-in checkout for selling them. |
+| 03 | **Free University Tools** | A curated directory of free and free-tier tools for students. |
+| 04 | **OrbINT** | An open-source reconnaissance casebook that keeps identifiers in one local case file. |
+| 05 | **MusicWidget** | A 4 MB always-on-top music player for Windows with plain-folder playlists. |
+| 06 | **GitReplay** | Replays any GitHub repository character by character, with a live HTML/CSS/JS preview. |
+| 07 | **Vibe Code Checklist** | A ship-readiness checklist for vibe-coded web apps (manual or agent). |
+| 08 | **Capes++** | A Minecraft Java Edition cape customizer with 75+ capes and full source. |
 
 ## Features
 
-- **Infinite project deck:** wheel, trackpad, arrow keys or the dots step through projects; the deck wraps without a jump.
-- **Expanded project view:** title, summary, facts, live site and repository, with a clean slide between projects.
-- **Profile view:** bio, skills, certificates and stack, with the deck moving aside rather than disappearing.
-- **Links view:** every profile and contact link in one centred 3 × 3 grid, each opening in a new tab.
+- **Infinite project deck:** wheel, trackpad, arrow keys or the dots step through projects; the deck wraps cleanly.
+- **Expanded project view:** title, summary, tags, live site and repository, with a scale morph in and out.
+- **Profile view:** bio plus expandable Skills, Certificates, Stack, and Projects branches.
+- **Links view:** contact and social icons in one place, each opening in a new tab.
 - **Bilingual copy:** full English and Spanish content, persisted in `localStorage`.
-- **Custom cursor and tooltips:** a lightweight pointer and contextual labels follow the pointer on fine pointers only.
-- **Discord profile card:** the Discord link opens a small replica of a Discord friend request.
-- **Mobile layout:** pinned action bar with safe-area padding, staggered info reveals and swipe-free, scroll-free navigation.
+- **Custom cursor and tooltips:** a lightweight pointer and contextual labels on fine pointers only.
+- **Discord profile card:** the Discord link opens a small friend-request style dialog.
+- **Mobile layout:** pinned action bar with safe-area padding and staggered info reveals.
 
 ## Preview
 
@@ -57,69 +60,73 @@ The whole site is bilingual (English / Spanish) and remembers your choice, works
 
 ```text
 .
-├── index.html                 # markup and the inline SVG favicon
+├── index.html                 # markup, OG embed tags, favicon
+├── CNAME                      # custom domain for GitHub Pages
+├── .nojekyll                  # keep Pages from running Jekyll
+├── .well-known/               # Discord domain verification
 ├── css/
-│   ├── base.css               # tokens, reset, cursor and the stage shell
-│   ├── components.css         # actions, buttons, notes, prose, tabs, lists
+│   ├── base.css               # tokens, reset, cursor, stage shell
+│   ├── components.css         # actions, notes, prose, branches, lists
 │   ├── deck.css               # panel, portrait, cards, browser frames, dots
-│   ├── responsive.css         # the mobile layout (<= 980px)
-│   ├── discord.css            # the discord profile dialog
+│   ├── responsive.css         # mobile layout (<= 980px)
+│   ├── discord.css            # Discord profile dialog
 │   └── motion.css             # keyframes and reduced-motion overrides
 ├── js/
-│   ├── copy.js                # English and Spanish interface strings
-│   ├── data.js                # projects, stack, socials, brand glyphs
-│   ├── core.js                # shared state and small helpers
-│   ├── ui.js                  # view painters (identity, actions, links, notes)
+│   ├── copy.js                # English / Spanish interface strings
+│   ├── data.js                # projects, stack, socials
+│   ├── core.js                # shared state and helpers
+│   ├── ui.js                  # identity, actions, links, profile painters
 │   ├── deck.js                # card markup, deck placement, project slides
-│   ├── motion.js              # flip, slide-out and shrink animations
+│   ├── motion.js              # flip, shrink, cluster transitions
 │   ├── navigation.js          # paint(), view changes, language, stepping
-│   ├── events.js              # click, keyboard, wheel and cursor bindings
+│   ├── events.js              # click, keyboard, wheel, cursor
 │   └── main.js                # boots the app
 ├── assets/
-│   ├── discord/               # avatar and profile badges
-│   ├── icons/                 # stack and skill marks
-│   ├── socials/               # link icons used by the deck
-│   └── *.png                  # project screenshots for the deck
-├── .github/
-│   └── preview-*.png          # README screenshots
-└── CNAME                      # custom domain for GitHub Pages
+│   ├── D.png                  # circular Delexo favicon
+│   ├── apps/                  # project app glyphs for the Profile list
+│   ├── icons/                 # stack marks
+│   ├── schools/               # CSUSM / Harvard tip marks
+│   ├── socials/               # Links icons
+│   ├── discord/               # Discord card art
+│   └── *.{webp,gif}           # project deck thumbnails
+└── .github/
+    └── preview-*.png          # README screenshots
 ```
 
 ## Local development
 
-There is nothing to install or build. Serve the folder over HTTP so the relative assets resolve:
+Nothing to install or build. Serve the folder over HTTP:
 
 ```bash
 python3 -m http.server 3000
 ```
 
-Then open <http://localhost:3000>. Any static server works.
+Open <http://localhost:3000>. Any static server works.
 
 ## Editing content
 
-Content lives in two files: `js/data.js` and `js/copy.js`.
-
 | What | Where |
 |---|---|
-| Project names, links, screenshots and write-ups | `js/data.js` → `projects` |
-| English and Spanish interface copy | `js/copy.js` → `copy.en` / `copy.es` |
+| Project names, links, thumbnails, icons, write-ups | `js/data.js` → `projects` |
+| English / Spanish interface copy and bio | `js/copy.js` → `copy.en` / `copy.es` |
 | Skills and certificates | `js/copy.js` → `skillItems` / `certItems` |
 | Stack icons | `js/data.js` → `stack` |
 | Social and contact links | `js/data.js` → `socials` |
 | Donate destination | `js/data.js` → `stripeHref` |
+| Discord / Open Graph embed text | `index.html` `<meta>` tags |
 
-Bump the `?v=` query on the `css/` and `js/` links in `index.html` when you change styling or behaviour, so returning visitors get the new build.
+Bump the `?v=` query on `css/` and `js/` links in `index.html` after styling or behaviour changes so returning visitors get the new build.
 
 ## Deployment
 
-The site is served by GitHub Pages straight from the root of `main`:
+Served by GitHub Pages from the root of `main`:
 
 1. Push to `main`.
 2. GitHub Pages rebuilds automatically.
-3. `CNAME` keeps it on [delexo.store](https://delexo.store) with HTTPS enforced.
+3. `CNAME` keeps it on [delexo.store](https://delexo.store) with HTTPS.
 
 ## Links
 
 [Website](https://delexo.store) · [GitHub](https://github.com/Delexoo) · [OrbINT](https://orbint.net)
 
-<div align="center"><sub>© Delexo, Computer Science</sub></div>
+<div align="center"><sub>Just a simple portfolio.</sub></div>
