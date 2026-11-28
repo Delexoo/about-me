@@ -32,7 +32,7 @@ Profile content (skills, certificates, stack, and an app-style project list) sit
 |---|---|---|
 | 01 | **Mochi** | A Windows AI assistant that docks to the desktop edge: chat, music, voice and file actions, local-first. |
 | 02 | **Moonrise** | One-click AI websites for local businesses, with built-in checkout for selling them. |
-| 03 | **Free University Tools** | A curated directory of free and free-tier tools for students. |
+| 03 | **Free University Tools** | An interactive graph of 18K+ free and free-tier tools for students. |
 | 04 | **OrbINT** | An open-source reconnaissance casebook that keeps identifiers in one local case file. |
 | 05 | **MusicWidget** | A 4 MB always-on-top music player for Windows with plain-folder playlists. |
 | 06 | **GitReplay** | Replays any GitHub repository character by character, with a live HTML/CSS/JS preview. |
