@@ -205,7 +205,8 @@ const stack = [
 const stripeHref = "https://buy.stripe.com/9B63cu3RE2ouaKgcHLcjS00";
 
 const profileRepo = {
-  commits: "https://api.github.com/repos/Delexoo/about-me/commits?per_page=1",
+  url: "https://github.com/Delexoo/about-me",
+  commitsApi: "https://api.github.com/repos/Delexoo/about-me/commits?per_page=1",
 };
 
 const profileViewsEndpoint = {

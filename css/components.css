@@ -370,6 +370,18 @@ body:not([data-view="socials"]) #social-row {
   line-height: 1.35;
 }
 
+a.profile-meta__link {
+  color: #9a9a9a;
+  text-decoration: none;
+  width: fit-content;
+  transition: color 0.2s ease;
+}
+
+a.profile-meta__link:hover,
+a.profile-meta__link:focus-visible {
+  color: var(--ink);
+}
+
 .branch summary {
   display: flex;
   align-items: center;

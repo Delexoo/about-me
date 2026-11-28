@@ -402,6 +402,7 @@ function paintProfileMeta() {
   const views = document.getElementById("profile-views");
   if (!updated && !views) return;
   if (updated) {
+    updated.href = profileRepo.url;
     updated.textContent = Number.isFinite(profileUpdatedMs)
       ? formatProfileAgo(profileUpdatedMs)
       : `${copy[lang].lastUpdated}: —`;
@@ -423,9 +424,13 @@ function startProfileMetaTicker() {
 function readCachedProfileUpdated() {
   try {
     const raw = localStorage.getItem("delexo-profile-updated");
-    if (raw == null) return null;
-    const n = Number(raw);
-    return Number.isFinite(n) ? n : null;
+    if (!raw) return null;
+    const data = JSON.parse(raw);
+    const ms = Number(data && data.ms);
+    const at = Number(data && data.at);
+    if (!Number.isFinite(ms) || !Number.isFinite(at)) return null;
+    if (Date.now() - at > 15 * 60 * 1000) return null;
+    return ms;
   } catch (err) {
     return null;
   }
@@ -433,30 +438,32 @@ function readCachedProfileUpdated() {
 
 function writeCachedProfileUpdated(ms) {
   try {
-    localStorage.setItem("delexo-profile-updated", String(ms));
+    localStorage.setItem("delexo-profile-updated", JSON.stringify({ ms, at: Date.now() }));
   } catch (err) { /* ignore */ }
 }
 
-async function fetchRepoUpdatedAt() {
-  const res = await fetch(profileRepo.commits, {
+async function fetchProfileUpdatedMs() {
+  const res = await fetch(profileRepo.commitsApi, {
     headers: { Accept: "application/vnd.github+json" },
-    cache: "no-store",
   });
   if (!res.ok) throw new Error(`commits ${res.status}`);
   const data = await res.json();
-  const iso = data?.[0]?.commit?.committer?.date || data?.[0]?.commit?.author?.date;
+  const iso = data && data[0] && data[0].commit && data[0].commit.committer && data[0].commit.committer.date;
   const ms = Date.parse(iso);
-  if (!Number.isFinite(ms)) throw new Error("commits bad date");
+  if (!Number.isFinite(ms)) throw new Error("commits bad payload");
   return ms;
 }
 
 function trackProfileUpdated() {
   if (profileUpdatedPromise) return profileUpdatedPromise;
   const cached = readCachedProfileUpdated();
-  if (cached != null) profileUpdatedMs = cached;
+  if (cached != null) {
+    profileUpdatedMs = cached;
+    paintProfileMeta();
+  }
   profileUpdatedPromise = (async () => {
     try {
-      const ms = await fetchRepoUpdatedAt();
+      const ms = await fetchProfileUpdatedMs();
       profileUpdatedMs = ms;
       writeCachedProfileUpdated(ms);
     } catch (err) {
@@ -555,7 +562,7 @@ function paintLower() {
       ${branchHtml("projects", t.projects, projectsHtml())}
     </div>
     <footer class="profile-meta">
-      <p class="profile-meta__line" id="profile-updated"></p>
+      <a class="profile-meta__line profile-meta__link" id="profile-updated" href="${esc(profileRepo.url)}" target="_blank" rel="noopener noreferrer"></a>
       <p class="profile-meta__line" id="profile-views"></p>
     </footer>
   `;
