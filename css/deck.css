@@ -308,12 +308,13 @@ body.is-flipping .browser img { transition: none; }
 .visit-tip__mark--csusm {
   height: 20px;
   width: auto;
-  max-width: 96px;
+  max-width: 28px;
 }
 
 .visit-tip__mark--harvard {
   height: 22px;
   width: auto;
+  max-width: 28px;
 }
 
 .visit-tip.is-on { opacity: 1; }

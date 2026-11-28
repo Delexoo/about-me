@@ -204,8 +204,9 @@ const stack = [
 
 const stripeHref = "https://buy.stripe.com/9B63cu3RE2ouaKgcHLcjS00";
 
-// Bump this when the profile content ships a meaningful update.
-const profileUpdatedAt = "2026-11-28T07:25:00.000Z";
+const profileRepo = {
+  commits: "https://api.github.com/repos/Delexoo/about-me/commits?per_page=1",
+};
 
 const profileViewsEndpoint = {
   hit: "https://abacus.jasoncameron.dev/hit/delexo/profile-views",

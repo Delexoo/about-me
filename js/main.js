@@ -7,6 +7,7 @@ function init() {
   document.body.classList.add("is-booting");
   if (motionOk) document.body.classList.add("is-deck-boot");
   paint();
+  trackProfileUpdated();
   trackProfileViews();
   if (!motionOk) document.body.classList.remove("is-deck-boot");
   booted = true;
