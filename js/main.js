@@ -5,14 +5,24 @@ function init() {
     if (saved === "en" || saved === "es") lang = saved;
   } catch (err) { /* ignore */ }
   document.body.classList.add("is-booting");
+  if (motionOk) document.body.classList.add("is-deck-boot");
   paint();
+  if (!motionOk) document.body.classList.remove("is-deck-boot");
   booted = true;
   bind();
   bindCursor();
-  window.setTimeout(() => {
+  const finishHeaderBoot = () => {
     document.body.classList.remove("is-booting");
-    if (!sliding && !progressAnim) armAuto();
-  }, 1100);
+    if (!motionOk && !sliding && !progressAnim) armAuto();
+  };
+  if (motionOk) {
+    window.requestAnimationFrame(() => {
+      window.requestAnimationFrame(() => deckBootEnter());
+    });
+    window.setTimeout(finishHeaderBoot, 880);
+  } else {
+    finishHeaderBoot();
+  }
 }
 
 init();

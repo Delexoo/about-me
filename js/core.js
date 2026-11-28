@@ -6,6 +6,12 @@ let booted = false;
 let actionKey = "";
 let aboutExitToken = 0;
 let lowerKey = "";
+let clusterHold = false;
+let clusterClosing = false;
+let clusterSwitching = false;
+let clusterCloseToken = 0;
+let mobileSocialsRevealTimer = 0;
+let mobileNavBusy = false;
 let wheelAcc = 0;
 let wheelAt = 0;
 let sliding = false;
@@ -48,5 +54,9 @@ function tip(label) {
 
 function inAbout(name) {
   return name === "profile" || name === "skills" || name === "certs" || name === "stack";
+}
+
+function mobileShowsDeck(name) {
+  return name === "home" || name === "socials";
 }
 

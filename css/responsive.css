@@ -1,6 +1,11 @@
 /* Delexo responsive: the mobile layout (<= 980px). */
 
 @media (max-width: 980px) {
+  .tip,
+  #visit-tip {
+    display: none !important;
+  }
+
   .stage {
     --edge-l: max(22px, env(safe-area-inset-left));
     --edge-r: max(22px, env(safe-area-inset-right));
@@ -9,14 +14,30 @@
     align-items: stretch;
     min-height: 100vh;
     min-height: 100dvh;
-    padding: calc(84px + env(safe-area-inset-top)) var(--edge-r) calc(104px + env(safe-area-inset-bottom)) var(--edge-l);
+    padding: calc(60px + env(safe-area-inset-top)) var(--edge-r) calc(104px + env(safe-area-inset-bottom)) var(--edge-l);
     gap: 14px;
   }
 
   .col-left,
   .identity { display: contents; }
 
-  h1, .role { font-size: clamp(32px, 8vw, 40px); }
+  h1, .role {
+    line-height: 1.04;
+    letter-spacing: -0.04em;
+  }
+
+  #title {
+    font-size: clamp(28px, 7.2vw, 34px);
+    line-height: 0.98;
+    margin-bottom: 0;
+  }
+
+  #role {
+    font-size: clamp(28px, 7.2vw, 34px);
+    font-weight: 500;
+    line-height: 0.98;
+    margin-top: -2px;
+  }
 
   .icon-btn { width: 56px; height: 56px; }
 
@@ -62,7 +83,14 @@
 
   body[data-view="socials"] { overflow-x: clip; }
 
-  body[data-view="socials"] .dots { visibility: hidden; }
+  body.is-socials-await #social-row {
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  body[data-view="socials"] .dots {
+    display: none;
+  }
 
   #note { order: 4; margin: 12px auto 0; text-align: center; }
 
@@ -110,6 +138,10 @@
 
   #actions > * { pointer-events: auto; }
 
+  body.is-mobile-nav-busy #actions {
+    pointer-events: none;
+  }
+
   body[data-view="project"] .col-right {
     order: 1;
     margin-top: 0;
@@ -139,9 +171,10 @@
   }
 
   body[data-view="socials"] .panel {
-    transform: translateX(115%);
+    transform: translateX(106%);
     opacity: 0;
     pointer-events: none;
+    transition: none !important;
   }
 
   body.is-about-exit .panel,
@@ -154,18 +187,65 @@
     transition: none;
   }
 
-  body:is([data-view="profile"], [data-view="skills"], [data-view="certs"], [data-view="stack"]) :where(#title, #role, .portrait, #lower .prose p, #more .links, #more .detail > *) {
+  /* The name and role stay put when the profile opens: they are not part of the
+     about-view reveal, so toggling the profile no longer re-fades them. */
+  body:is([data-view="profile"], [data-view="skills"], [data-view="certs"], [data-view="stack"]) :where(#lower .prose p, #more .branch) {
     animation: infoIn 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
   }
 
   body:is([data-view="profile"], [data-view="skills"], [data-view="certs"], [data-view="stack"]) #lower.fresh { animation: none; }
 
-  body:is([data-view="profile"], [data-view="skills"], [data-view="certs"], [data-view="stack"]) #role { animation-delay: 0.08s; }
-  body:is([data-view="profile"], [data-view="skills"], [data-view="certs"], [data-view="stack"]) #lower .prose p:nth-child(1) { animation-delay: 0.16s; }
-  body:is([data-view="profile"], [data-view="skills"], [data-view="certs"], [data-view="stack"]) #lower .prose p:nth-child(2) { animation-delay: 0.24s; }
-  body:is([data-view="profile"], [data-view="skills"], [data-view="certs"], [data-view="stack"]) #more .links { animation-delay: 0.3s; }
-  body:is([data-view="profile"], [data-view="skills"], [data-view="certs"], [data-view="stack"]) #more .detail > * { animation-delay: 0.36s; }
-  body:is([data-view="profile"], [data-view="skills"], [data-view="certs"], [data-view="stack"]) .portrait { animation-delay: 0.44s; }
+  body:is([data-view="profile"], [data-view="skills"], [data-view="certs"], [data-view="stack"]) #lower .prose p:nth-child(1) { animation-delay: 0.12s; }
+  body:is([data-view="profile"], [data-view="skills"], [data-view="certs"], [data-view="stack"]) #more .branch:nth-child(1) { animation-delay: 0.2s; }
+  body:is([data-view="profile"], [data-view="skills"], [data-view="certs"], [data-view="stack"]) #more .branch:nth-child(2) { animation-delay: 0.26s; }
+  body:is([data-view="profile"], [data-view="skills"], [data-view="certs"], [data-view="stack"]) #more .branch:nth-child(3) { animation-delay: 0.32s; }
+  body:is([data-view="profile"], [data-view="skills"], [data-view="certs"], [data-view="stack"]) #more .branch:nth-child(4) { animation-delay: 0.38s; }
+
+  body:is([data-view="profile"], [data-view="skills"], [data-view="certs"], [data-view="stack"]) #role {
+    margin-bottom: 4px;
+  }
+
+  body:is([data-view="profile"], [data-view="skills"], [data-view="certs"], [data-view="stack"]) #lower {
+    margin: 52px 0 0;
+    max-width: none;
+  }
+
+  body:is([data-view="profile"], [data-view="skills"], [data-view="certs"], [data-view="stack"]) .prose,
+  body:is([data-view="profile"], [data-view="skills"], [data-view="certs"], [data-view="stack"]) .prose p {
+    text-align: left;
+  }
+
+  body:is([data-view="profile"], [data-view="skills"], [data-view="certs"], [data-view="stack"]) #more {
+    align-items: flex-start;
+    width: 100%;
+    margin: 16px 0 24px;
+    padding: 0;
+    text-align: left;
+  }
+
+  body:is([data-view="profile"], [data-view="skills"], [data-view="certs"], [data-view="stack"]) #more .branches {
+    width: 100%;
+    max-width: none;
+  }
+
+  body:is([data-view="profile"], [data-view="skills"], [data-view="certs"], [data-view="stack"]) #more .skill-list,
+  body:is([data-view="profile"], [data-view="skills"], [data-view="certs"], [data-view="stack"]) #more .cert-list,
+  body:is([data-view="profile"], [data-view="skills"], [data-view="certs"], [data-view="stack"]) #more .stack {
+    justify-content: flex-start;
+    align-items: flex-start;
+    max-width: none;
+  }
+
+  body:is([data-view="profile"], [data-view="skills"], [data-view="certs"], [data-view="stack"]) #more .cert-list li {
+    justify-content: flex-start;
+  }
+
+  /* The portrait glides in from the right once the deck has slid away. */
+  body:is([data-view="profile"], [data-view="skills"], [data-view="certs"], [data-view="stack"]) .portrait {
+    animation: portraitIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.36s both;
+    margin-left: 0;
+    margin-right: auto;
+  }
 
   body[data-view="profile"] #actions,
   body[data-view="skills"] #actions,
@@ -175,7 +255,7 @@
   body[data-view="profile"] #lower,
   body[data-view="skills"] #lower,
   body[data-view="certs"] #lower,
-  body[data-view="stack"] #lower { order: 5; margin-top: 10px; }
+  body[data-view="stack"] #lower { order: 5; }
 
   body[data-view="profile"] #more,
   body[data-view="skills"] #more,
@@ -189,6 +269,126 @@
 
   .deck { flex-direction: row; }
 
+  body[data-view="home"] #dots .dot {
+    opacity: 0;
+    transform: translateX(12px);
+  }
+
+  body[data-view="home"].is-dots-ready:not(.is-dots-exit) #dots .dot {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  body.is-deck-await[data-view="home"] #panel,
+  body.is-deck-await[data-view="socials"] #panel {
+    transform: translateX(106%);
+    opacity: 0;
+    transition: none !important;
+    pointer-events: none;
+  }
+
+  body.is-deck-boot[data-view="home"] #panel,
+  body.is-deck-boot[data-view="socials"] #panel {
+    opacity: 0;
+    transform: none !important;
+    transition: none !important;
+    pointer-events: none;
+  }
+
+  body.is-deck-boot.is-deck-enter[data-view="home"] #panel,
+  body.is-deck-boot.is-deck-enter[data-view="socials"] #panel {
+    opacity: 1;
+    transform: none !important;
+    transition: opacity 0.42s ease !important;
+    pointer-events: auto;
+  }
+
+  body.is-deck-boot[data-view="home"] #dots .dot {
+    opacity: 0;
+    transform: none !important;
+    transition: none;
+  }
+
+  body.is-deck-boot.is-deck-enter[data-view="home"] #dots .dot {
+    opacity: 1;
+    transform: none !important;
+    transition: opacity 0.42s ease !important;
+    transition-delay: 0s !important;
+  }
+
+  body.is-deck-await[data-view="home"] #dots .dot {
+    opacity: 0;
+    transform: translateX(12px);
+    transition: none;
+  }
+
+  body.is-deck-enter:not(.is-deck-boot)[data-view="home"] #panel,
+  body.is-deck-enter:not(.is-deck-boot)[data-view="socials"] #panel,
+  body.is-deck-exit[data-view="home"] #panel,
+  body.is-deck-exit[data-view="socials"] #panel {
+    transition: transform 0.52s var(--ease), opacity 0.42s ease !important;
+  }
+
+  body.is-deck-enter:not(.is-deck-boot)[data-view="home"] #panel,
+  body.is-deck-enter:not(.is-deck-boot)[data-view="socials"] #panel {
+    transform: translateX(0);
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  body.is-deck-exit[data-view="home"] #panel,
+  body.is-deck-exit[data-view="socials"] #panel {
+    transform: translateX(106%);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  body.is-deck-enter:not(.is-deck-boot)[data-view="home"]:not(.is-dots-reveal) #dots .dot {
+    opacity: 0;
+    transform: translateX(12px);
+    transition: none;
+  }
+
+  body.is-deck-enter:not(.is-deck-boot)[data-view="home"].is-dots-reveal #dots .dot {
+    opacity: 1;
+    transform: translateX(0);
+    transition:
+      opacity 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+      transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  body[data-view="home"].is-dots-exit #dots .dot {
+    opacity: 0;
+    transform: translateX(14px);
+    transition:
+      opacity 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+      transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  body.is-dots-exit #dots .dot:nth-child(8) { transition-delay: 0s; }
+  body.is-dots-exit #dots .dot:nth-child(7) { transition-delay: 0.06s; }
+  body.is-dots-exit #dots .dot:nth-child(6) { transition-delay: 0.12s; }
+  body.is-dots-exit #dots .dot:nth-child(5) { transition-delay: 0.18s; }
+  body.is-dots-exit #dots .dot:nth-child(4) { transition-delay: 0.24s; }
+  body.is-dots-exit #dots .dot:nth-child(3) { transition-delay: 0.3s; }
+  body.is-dots-exit #dots .dot:nth-child(2) { transition-delay: 0.36s; }
+  body.is-dots-exit #dots .dot:nth-child(1) { transition-delay: 0.48s; }
+
+  body.is-deck-enter:not(.is-deck-boot)[data-view="home"].is-dots-reveal #dots .dot:nth-child(8) { transition-delay: 0.06s; }
+  body.is-deck-enter:not(.is-deck-boot)[data-view="home"].is-dots-reveal #dots .dot:nth-child(7) { transition-delay: 0.12s; }
+  body.is-deck-enter:not(.is-deck-boot)[data-view="home"].is-dots-reveal #dots .dot:nth-child(6) { transition-delay: 0.18s; }
+  body.is-deck-enter:not(.is-deck-boot)[data-view="home"].is-dots-reveal #dots .dot:nth-child(5) { transition-delay: 0.24s; }
+  body.is-deck-enter:not(.is-deck-boot)[data-view="home"].is-dots-reveal #dots .dot:nth-child(4) { transition-delay: 0.3s; }
+  body.is-deck-enter:not(.is-deck-boot)[data-view="home"].is-dots-reveal #dots .dot:nth-child(3) { transition-delay: 0.36s; }
+  body.is-deck-enter:not(.is-deck-boot)[data-view="home"].is-dots-reveal #dots .dot:nth-child(2) { transition-delay: 0.42s; }
+  body.is-deck-enter:not(.is-deck-boot)[data-view="home"].is-dots-reveal #dots .dot:nth-child(1) { transition-delay: 0.48s; }
+
+  body.is-flipping.is-dots-exit[data-view="project"] .dots {
+    opacity: 1 !important;
+    visibility: visible;
+    pointer-events: none;
+  }
+
   .panel {
     align-self: center;
     width: calc(100% + var(--edge-l) + var(--edge-r));
@@ -198,7 +398,9 @@
     aspect-ratio: auto;
     margin-left: calc(-1 * var(--edge-l));
     margin-right: calc(-1 * var(--edge-r));
-    transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease, height 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+    /* Height is deliberately not animated: growing the panel while it slides
+       sideways is what made the deck travel diagonally when leaving a view. */
+    transition: transform 0.55s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
   }
 
   body[data-view="home"] .card,
@@ -245,9 +447,8 @@
 
   .prose p { font-size: clamp(20px, 5.4vw, 24px); }
 
-  .browser img,
-  body[data-view="project"] .browser img {
-    height: clamp(120px, 42vw, 280px);
+  .browser img {
+    max-height: min(46cqw, 280px);
   }
 
   .more { margin: 10px 0 24px; }
@@ -270,6 +471,10 @@
   .pip-fill {
     transform: scaleX(0);
     transform-origin: left center;
+  }
+
+  body[data-view="project"] .dot.is-on .pip-fill {
+    transform: scaleX(1);
   }
 
   .lang {

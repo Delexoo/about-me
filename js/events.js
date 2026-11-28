@@ -22,7 +22,8 @@ function bind() {
 
   window.addEventListener("resize", () => {
     placeCluster(true);
-    if (view !== "home" && view !== "socials") return;
+    if (inAbout(view)) placeMore();
+    if (view !== "home" && view !== "socials" && view !== "project") return;
     const deck = document.getElementById("deck");
     if (deck) deck.style.transition = "none";
     placeDeck();
@@ -33,6 +34,8 @@ function bind() {
   });
 
   const panel = document.getElementById("panel");
+  const dots = document.getElementById("dots");
+  const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
   const holdAuto = (on) => {
     autoHold = on;
     if (!progressAnim) {
@@ -42,10 +45,12 @@ function bind() {
     if (on) progressAnim.pause();
     else progressAnim.play();
   };
-  panel.addEventListener("pointerenter", () => holdAuto(true));
-  panel.addEventListener("pointerleave", () => holdAuto(false));
-  document.getElementById("dots").addEventListener("pointerenter", () => holdAuto(true));
-  document.getElementById("dots").addEventListener("pointerleave", () => holdAuto(false));
+  if (finePointer) {
+    panel.addEventListener("pointerenter", () => holdAuto(true));
+    panel.addEventListener("pointerleave", () => holdAuto(false));
+    dots.addEventListener("pointerenter", () => holdAuto(true));
+    dots.addEventListener("pointerleave", () => holdAuto(false));
+  }
   document.addEventListener("visibilitychange", () => {
     if (document.hidden) stopProgress();
     else scheduleAuto();
@@ -108,7 +113,7 @@ function bind() {
       return;
     }
     const dot = event.target.closest("[data-dot]");
-    if (dot && (view === "home" || view === "socials")) {
+    if (dot && (view === "home" || view === "socials" || view === "project")) {
       setIndex(Number(dot.dataset.dot));
       return;
     }
@@ -157,12 +162,19 @@ function bindCursor() {
   let ty = 0;
   let active = false;
   let overCard = false;
-  let linkTip = "";
+  let linkTipHtml = "";
   const placeVisit = () => {
     if (!visit) return;
-    const label = overCard && (view === "home" || view === "socials") ? copy[lang].visit : linkTip;
-    if (visit.textContent !== label) visit.textContent = label;
-    const show = !!label;
+    const cardTip = overCard && (view === "home" || view === "socials");
+    if (cardTip) {
+      const label = copy[lang].visit;
+      if (visit.textContent !== label) visit.textContent = label;
+    } else if (linkTipHtml) {
+      if (visit.innerHTML !== linkTipHtml) visit.innerHTML = linkTipHtml;
+    } else if (visit.textContent) {
+      visit.textContent = "";
+    }
+    const show = cardTip || !!linkTipHtml;
     visit.hidden = false;
     visit.classList.toggle("is-on", show);
     if (!show) return;
@@ -189,7 +201,7 @@ function bindCursor() {
     overCard = !!(card && !card.hasAttribute("data-clone"));
     const link = event.target.closest && event.target.closest(".prose-link");
     const linkTipEl = link ? link.querySelector(".tip") : null;
-    linkTip = linkTipEl ? linkTipEl.textContent : "";
+    linkTipHtml = linkTipEl ? linkTipEl.innerHTML.trim() : "";
     if (active) return;
     x = tx;
     y = ty;
@@ -199,7 +211,7 @@ function bindCursor() {
   document.addEventListener("pointerleave", () => {
     active = false;
     overCard = false;
-    linkTip = "";
+    linkTipHtml = "";
     cursor.classList.remove("is-on");
   });
   const tick = () => {

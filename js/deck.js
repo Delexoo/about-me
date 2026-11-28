@@ -20,7 +20,7 @@ let wrapToken = 0;
 let wrapBusy = false;
 let wrapQueue = 0;
 
-function placeDeck(wrapDirection) {
+function placeDeck(wrapDirection, forceSnap) {
   const panel = document.getElementById("panel");
   const deck = document.getElementById("deck");
   if (!deck) return;
@@ -38,13 +38,16 @@ function placeDeck(wrapDirection) {
     else card.removeAttribute("aria-current");
   });
   if (view === "project") {
+    // Full-view cards stack and fill the panel; stepping slides one whole panel
+    // out and the next in (see slideProject). No home-style rail here.
     deck.style.gap = "0px";
     deck.style.transform = "none";
+    deck.style.transition = "none";
     return;
   }
   if (!browsing && !inAbout(view)) return;
   if (window.innerWidth <= 980 && (inAbout(view) || view === "socials")) return;
-  if (wrapBusy && !wrapDirection) return;
+  if (wrapBusy && !wrapDirection && !forceSnap) return;
   const card = cards.find((item) => !item.hasAttribute("data-clone")) || cards[0];
   if (!card) return;
   const across = getComputedStyle(deck).flexDirection === "row";
@@ -62,13 +65,19 @@ function placeDeck(wrapDirection) {
   let slot = index + 2;
   if (wrapDirection === 1) slot = projects.length + 2;
   if (wrapDirection === -1) slot = 1;
-  const snap = !wrapDirection && (!browsing || !deckReady || deck.style.transform === "none");
+  const morphing =
+    document.body.classList.contains("is-closing") ||
+    document.body.classList.contains("is-flipping");
+  // forceSnap: after an infinite-loop wrap, jump from the clone slot to the real
+  // card with no animation (otherwise the deck races the long way around).
+  const snap = !!forceSnap || (!wrapDirection && (!browsing || !deckReady || morphing));
   if (snap) deck.style.transition = "none";
+  else deck.style.transition = "";
   deck.style.gap = `${gap}px`;
   shift(center - slot * step);
   if (snap) {
     void deck.offsetWidth;
-    deck.style.transition = "";
+    deck.style.transition = morphing ? "none" : "";
     deckReady = true;
   }
   if (!wrapDirection) return;
@@ -78,10 +87,7 @@ function placeDeck(wrapDirection) {
     if (token !== wrapToken) return;
     wrapToken += 1;
     wrapBusy = false;
-    deck.style.transition = "none";
-    placeDeck(0);
-    void deck.offsetWidth;
-    deck.style.transition = "";
+    placeDeck(0, true);
     const queued = wrapQueue;
     wrapQueue = 0;
     if (queued) stepProjects(queued);
@@ -179,40 +185,63 @@ function armAuto() {
   };
 }
 
+let projectSlideToken = 0;
 
-let projectSlideTimer = 0;
-
+// Full-view step: the outgoing project panel slides fully off-screen while the
+// next one enters from the opposite edge — two complete panels, not a rail peek.
 function slideProject(previous, step) {
-  if (!motionOk || !previous || !step) return;
   const deck = document.getElementById("deck");
   const panel = document.getElementById("panel");
   const current = deck && deck.querySelector(".card.is-on");
-  if (!current || current === previous || !panel) return;
+  if (!motionOk || !previous || !current || current === previous || !panel || !step) {
+    sliding = false;
+    return;
+  }
   const across = getComputedStyle(deck).flexDirection === "row";
   const axis = across ? "X" : "Y";
   const distance = (across ? panel.clientWidth : panel.clientHeight) || 600;
   const ease = "cubic-bezier(0.45, 0.05, 0.25, 1)";
-  const duration = 620;
+  const duration = 700;
+  const token = ++projectSlideToken;
   previous.getAnimations().forEach((anim) => anim.cancel());
   current.getAnimations().forEach((anim) => anim.cancel());
   document.body.classList.add("is-project-sliding");
-  window.clearTimeout(projectSlideTimer);
-  projectSlideTimer = window.setTimeout(() => {
+  previous.classList.add("is-project-exit");
+  current.classList.add("is-project-enter");
+  previous.style.transform = "translate(0px, 0px)";
+  current.style.transform = `translate${axis}(${distance * step}px)`;
+  void panel.offsetWidth;
+  const leave = previous.animate(
+    [
+      { transform: "translate(0px, 0px)" },
+      { transform: `translate${axis}(${-distance * step}px)` },
+    ],
+    { duration, easing: ease, fill: "forwards" }
+  );
+  const enter = current.animate(
+    [
+      { transform: `translate${axis}(${distance * step}px)` },
+      { transform: "translate(0px, 0px)" },
+    ],
+    { duration, easing: ease, fill: "forwards" }
+  );
+  const finish = () => {
+    if (token !== projectSlideToken) return;
+    leave.cancel();
+    enter.cancel();
+    previous.style.transform = "";
+    current.style.transform = "";
+    previous.classList.remove("is-project-exit");
+    current.classList.remove("is-project-enter");
     document.body.classList.remove("is-project-sliding");
-  }, duration + 60);
-  previous.animate(
-    [
-      { opacity: 1, transform: `translate${axis}(0px)` },
-      { opacity: 1, transform: `translate${axis}(${-distance * step}px)` },
-    ],
-    { duration, easing: ease }
-  );
-  current.animate(
-    [
-      { opacity: 1, transform: `translate${axis}(${distance * step}px)` },
-      { opacity: 1, transform: `translate${axis}(0px)` },
-    ],
-    { duration, easing: ease }
-  );
+    sliding = false;
+    const queued = wrapQueue;
+    wrapQueue = 0;
+    if (queued) stepProjects(queued);
+  };
+  enter.onfinish = finish;
+  enter.oncancel = finish;
+  window.setTimeout(finish, duration + 80);
 }
+
 

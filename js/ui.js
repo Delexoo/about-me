@@ -13,7 +13,14 @@ function paintLang() {
 function paintIdentity() {
   const project = projects[index];
   paintText("title", view === "project" ? project.name : "Delexo");
-  paintText("role", view === "project" ? project[lang].sub : text("major"));
+  const role = document.getElementById("role");
+  if (view === "project") {
+    paintText("role", "");
+    if (role) role.hidden = true;
+  } else {
+    if (role) role.hidden = false;
+    paintText("role", text("major"));
+  }
 }
 
 
@@ -29,6 +36,26 @@ function socialLinks() {
     const external = item.href.startsWith("http") ? ' target="_blank" rel="noopener noreferrer"' : "";
     return `<a class="icon-btn" href="${esc(item.href)}"${external} aria-label="${esc(label)}">${graphic}${tip(label)}</a>`;
   }).join("");
+}
+
+function releaseClusterActionToggles() {
+  setClusterActionToggles(false, false);
+}
+
+function setClusterActionToggles(profileOn, socialsOn) {
+  if (view === "project") return;
+  const actions = document.getElementById("actions");
+  if (!actions) return;
+  const profileBtn = actions.querySelector("[data-go='profile']");
+  const socialBtn = actions.querySelector("[data-go='socials']");
+  if (profileBtn) {
+    profileBtn.classList.toggle("is-on", profileOn);
+    profileBtn.setAttribute("aria-pressed", String(profileOn));
+  }
+  if (socialBtn) {
+    socialBtn.classList.toggle("is-on", socialsOn);
+    socialBtn.setAttribute("aria-pressed", String(socialsOn));
+  }
 }
 
 function paintActions() {
@@ -76,6 +103,36 @@ function paintActions() {
 let socialKey = "";
 let socialTimer = 0;
 
+function dismissAboutContent() {
+  const lower = document.getElementById("lower");
+  const more = document.getElementById("more");
+  if (!lower.textContent.trim() || more.hidden) return false;
+  lower.classList.remove("fresh");
+  lower.classList.add("is-out");
+  more.classList.add("is-out");
+  return true;
+}
+
+function dismissSocialRow() {
+  const row = document.getElementById("social-row");
+  if (!row || row.hidden) return false;
+  clearTimeout(socialTimer);
+  row.classList.remove("is-in");
+  void row.offsetWidth;
+  row.classList.add("is-out");
+  return true;
+}
+
+function revealMobileSocialRow() {
+  document.body.classList.remove("is-socials-await");
+  const row = document.getElementById("social-row");
+  if (!row || view !== "socials") return;
+  row.classList.remove("is-out");
+  if (!motionOk) return;
+  void row.offsetWidth;
+  row.classList.add("is-in");
+}
+
 function paintSocialRow() {
   const row = document.getElementById("social-row");
   if (socialKey !== lang) {
@@ -83,17 +140,24 @@ function paintSocialRow() {
     row.innerHTML = socialLinks();
   }
   const show = view === "socials";
+  if (clusterClosing || clusterSwitching) return;
   clearTimeout(socialTimer);
-  row.classList.remove("is-in");
   if (show) {
     row.classList.remove("is-out");
     row.hidden = false;
-    if (booted && motionOk) {
-      void row.offsetWidth;
-      row.classList.add("is-in");
+    if (booted && motionOk && !clusterHold) {
+      if (window.innerWidth <= 980 && document.body.classList.contains("is-socials-await")) {
+        row.classList.remove("is-in");
+        return;
+      }
+      if (!row.classList.contains("is-in")) {
+        void row.offsetWidth;
+        row.classList.add("is-in");
+      }
     }
     return;
   }
+  row.classList.remove("is-in");
   if (row.hidden) return;
   if (!booted || !motionOk) {
     row.hidden = true;
@@ -121,7 +185,6 @@ function paintNote() {
   if (note.dataset.key === key) return;
   note.dataset.key = key;
   note.innerHTML = `
-    <span class="note-kicker">${esc(data.note)}</span>
     <p class="note-body">${esc(data.desc)}</p>
     <ul class="note-facts">${data.facts.map((fact) => `<li>${esc(fact)}</li>`).join("")}</ul>
   `;
@@ -133,89 +196,168 @@ function paintNote() {
 }
 
 function stackHtml() {
-  return `<div class="stack">${stack.map(([name, src]) =>
-    `<figure><img src="${src}" alt="" width="36" height="36" draggable="false" onerror="this.parentElement.remove()" /><figcaption>${esc(name)}</figcaption></figure>`
-  ).join("")}</div>`;
+  return `<div class="stack">${stack.map(([name, src]) => {
+    const key = String(src).split("/").pop().replace(/\.\w+$/, "");
+    return `<figure class="stack-item stack-item--${esc(key)}"><span class="stack-icon" aria-hidden="true"><img src="${src}" alt="" width="24" height="24" draggable="false" onerror="this.closest('figure').remove()" /></span><figcaption>${esc(name)}</figcaption></figure>`;
+  }).join("")}</div>`;
 }
 
+function projectsHtml() {
+  return `<ul class="project-list">${projects.map((project) => {
+    const locale = project[lang] || {};
+    const identity = locale.sub || locale.note || "";
+    const tint = project.tint || "#ececec";
+    const icon = project.icon || project.image;
+    return `<li><a class="app-row" href="${esc(project.href)}" target="_blank" rel="noopener noreferrer"><span class="app-row__icon" style="background:${esc(tint)}"><img src="${esc(icon)}" alt="" width="28" height="28" draggable="false" loading="lazy" decoding="async" /></span><span class="app-row__copy"><span class="app-row__name">${esc(project.name)}</span>${identity ? `<span class="app-row__id">${esc(identity)}</span>` : ""}</span></a></li>`;
+  }).join("")}</ul>`;
+}
+
+function skillsHtml(t) {
+  return `<ul class="skill-list">${t.skillItems.map((item) => `<li>${esc(item)}</li>`).join("")}</ul>`;
+}
+
+function certsHtml(t) {
+  return `<ul class="cert-list">${t.certItems.map((item) => {
+    const name = typeof item === "string" ? item : item.name;
+    const href = typeof item === "string" ? "" : item.href;
+    const label = `<img src="assets/verified.webp" alt="" width="28" height="28" /><span>${esc(name)}</span>`;
+    return href
+      ? `<li><a class="cert-link" href="${esc(href)}" target="_blank" rel="noopener noreferrer">${label}</a></li>`
+      : `<li>${label}</li>`;
+  }).join("")}</ul>`;
+}
+
+function branchHtml(id, label, body) {
+  return `<details class="branch" data-branch="${esc(id)}"><summary><span>${esc(label)}</span><span class="branch-chevron" aria-hidden="true"></span></summary><div class="branch-body"><div class="branch-panel">${body}</div></div></details>`;
+}
+
+function animateBranch(details, open) {
+  const body = details.querySelector(".branch-body");
+  if (!body) {
+    details.open = open;
+    return;
+  }
+  if (!motionOk) {
+    details.open = open;
+    details.classList.toggle("is-expanded", open);
+    body.style.height = "";
+    body.style.opacity = "";
+    body.style.overflow = "";
+    body.style.transition = "";
+    return;
+  }
+  if (details.dataset.animating === "1") return;
+  details.dataset.animating = "1";
+  const duration = 360;
+  const ease = "cubic-bezier(0.22, 1, 0.36, 1)";
+  const finish = (propertyName, done) => {
+    const onEnd = (event) => {
+      if (event.target !== body || event.propertyName !== propertyName) return;
+      body.removeEventListener("transitionend", onEnd);
+      done();
+    };
+    body.addEventListener("transitionend", onEnd);
+  };
+
+  if (open) {
+    details.classList.add("is-expanded");
+    details.open = true;
+    body.style.overflow = "hidden";
+    body.style.height = "0px";
+    body.style.opacity = "0";
+    body.style.transition = "none";
+    const target = body.scrollHeight;
+    void body.offsetHeight;
+    body.style.transition = `height ${duration}ms ${ease}, opacity ${Math.round(duration * 0.8)}ms ${ease}`;
+    body.style.height = `${target}px`;
+    body.style.opacity = "1";
+    finish("height", () => {
+      if (details.open) {
+        body.style.height = "auto";
+        body.style.overflow = "";
+        body.style.transition = "";
+      }
+      details.dataset.animating = "0";
+    });
+    return;
+  }
+
+  details.classList.remove("is-expanded");
+  body.style.overflow = "hidden";
+  body.style.height = `${body.scrollHeight}px`;
+  body.style.opacity = "1";
+  body.style.transition = "none";
+  void body.offsetHeight;
+  body.style.transition = `height ${duration}ms ${ease}, opacity ${Math.round(duration * 0.65)}ms ease`;
+  body.style.height = "0px";
+  body.style.opacity = "0";
+  finish("height", () => {
+    details.open = false;
+    body.style.height = "";
+    body.style.opacity = "";
+    body.style.overflow = "";
+    body.style.transition = "";
+    details.dataset.animating = "0";
+  });
+}
+
+function bindBranches(root) {
+  root.querySelectorAll(".branch").forEach((details) => {
+    const summary = details.querySelector("summary");
+    if (!summary || summary.dataset.bound === "1") return;
+    summary.dataset.bound = "1";
+    summary.addEventListener("click", (event) => {
+      event.preventDefault();
+      if (details.dataset.animating === "1") return;
+      animateBranch(details, !details.open);
+    });
+  });
+}
 
 function paintLower() {
   const key = `${view}|${lang}`;
   if (key === lowerKey) return;
-  const prev = lowerKey;
   lowerKey = key;
   const lower = document.getElementById("lower");
   const more = document.getElementById("more");
   const t = copy[lang];
-  const about = view === "skills" || view === "certs" || view === "stack";
-  if (!about) {
-    lower.classList.remove("fresh");
+  if (!inAbout(view)) {
+    if (clusterClosing || clusterSwitching) return;
+    lower.classList.remove("fresh", "is-out");
     lower.innerHTML = "";
+    more.classList.remove("is-out");
     more.hidden = true;
     more.innerHTML = "";
     return;
   }
-  const tab = (name) => `<button type="button" data-go="${name}" class="${view === name ? "is-on" : ""}" aria-pressed="${view === name}">${esc(t[name])}</button>`;
-  const detail = view === "skills"
-    ? `<ul class="skill-list">${t.skillItems.map((item) => `<li>${esc(item)}</li>`).join("")}</ul>`
-    : view === "certs"
-      ? `<ul class="cert-list">${t.certItems.map((item) => `<li><img src="assets/verified.webp" alt="" width="28" height="28" />${esc(item)}</li>`).join("")}</ul>`
-      : stackHtml();
-  const switching = /^(skills|certs|stack)\|/.test(prev) && prev.endsWith(`|${lang}`) && more.querySelector(".links");
-  if (!switching) {
-    lower.classList.remove("fresh");
-    lower.innerHTML = `<div class="prose"><p>${t.profileA}</p><p>${t.profileB}</p></div>`;
-    more.hidden = false;
-    more.innerHTML = `
-      <div class="links" role="tablist">
-        <span class="links-thumb" aria-hidden="true"></span>
-        ${tab("skills")}
-        ${tab("certs")}
-        ${tab("stack")}
-      </div>
-      <div class="detail">${detail}</div>
-    `;
-    placeThumb(true);
-    if (!booted || !motionOk) return;
-    void lower.offsetWidth;
-    lower.classList.add("fresh");
-    return;
-  }
-  more.querySelectorAll(".links button").forEach((btn) => {
-    const on = btn.dataset.go === view;
-    btn.classList.toggle("is-on", on);
-    btn.setAttribute("aria-pressed", String(on));
-  });
-  const panel = more.querySelector(".detail");
-  panel.innerHTML = detail;
-  placeThumb(false);
+  lower.classList.remove("fresh");
+  lower.innerHTML = `<div class="prose"><p>${t.profileA}</p></div>`;
+  more.hidden = false;
+  more.innerHTML = `
+    <div class="branches">
+      ${branchHtml("skills", t.skills, skillsHtml(t))}
+      ${branchHtml("certs", t.certs, certsHtml(t))}
+      ${branchHtml("stack", t.stack, stackHtml())}
+      ${branchHtml("projects", t.projects, projectsHtml())}
+    </div>
+  `;
+  bindBranches(more);
   if (!booted || !motionOk) return;
-  panel.classList.remove("is-in");
-  void panel.offsetWidth;
-  panel.classList.add("is-in");
-}
-
-function placeThumb(instant) {
-  const links = document.querySelector("#more .links");
-  if (!links) return;
-  const thumb = links.querySelector(".links-thumb");
-  const on = links.querySelector("button.is-on");
-  if (!thumb || !on) return;
-  const apply = () => {
-    thumb.style.width = `${on.offsetWidth}px`;
-    thumb.style.transform = `translate(${on.offsetLeft}px, 0)`;
-  };
-  if (instant) thumb.style.transition = "none";
-  apply();
-  if (instant) {
-    void thumb.offsetWidth;
-    thumb.style.transition = "";
+  void lower.offsetWidth;
+  lower.classList.add("fresh");
+  if (window.innerWidth <= 980) {
+    window.requestAnimationFrame(() => replayMobileAboutMotion());
   }
 }
 
 function placeMore() {
   const more = document.getElementById("more");
   if (!more || more.hidden) return;
+  if (window.innerWidth > 980 || inAbout(view)) {
+    more.style.width = "";
+    more.style.marginLeft = "";
+    return;
+  }
   const parent = more.parentElement;
   const stage = document.querySelector(".stage");
   const anchor = parent.getBoundingClientRect().width || !stage ? parent : stage;
@@ -228,7 +370,7 @@ function placeMore() {
 
 function paintDots() {
   const el = document.getElementById("dots");
-  const cards = view === "home" || view === "socials";
+  const cards = view === "home" || view === "socials" || view === "project";
   el.setAttribute("aria-hidden", cards ? "false" : "true");
   const fresh = el.querySelectorAll(".dot").length !== projects.length;
   if (fresh) {

@@ -1,6 +1,9 @@
 /* Delexo base: design tokens, reset, cursor and the stage shell. */
 :root {
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-soft: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-glide: cubic-bezier(0.62, 0.02, 0.2, 1);
+  --view-ms: 1000ms;
   --ink: #1c1c1c;
   --muted: #b3b3b3;
   --prose: #9a9a9a;
@@ -63,13 +66,16 @@ button, a, label, summary, input, textarea, select {
 
 .cursor svg { display: block; width: 32px; height: 32px; }
 
-.icon-btn, .dot, .lang button, .links button { user-select: none; }
+.icon-btn, .dot, .lang button, .branch summary { user-select: none; }
 
 :focus { outline: none; }
 
+/* Keyboard focus: a quiet, rounded ring instead of a hard black box. Pointer
+   users never see it; keyboard users still get a clear cue that sits softly
+   outside the component and follows its border-radius. */
 :focus-visible {
-  outline: 2px solid var(--ink);
-  outline-offset: 3px;
+  outline: 2px solid rgba(28, 28, 28, 0.18);
+  outline-offset: 4px;
 }
 
 .lang {
@@ -117,7 +123,7 @@ button, a, label, summary, input, textarea, select {
   padding-top: calc(50vh - 148px);
   padding-bottom: 8vh;
   padding-left: clamp(36px, 4vw, 72px);
-  transition: padding-top 0.9s cubic-bezier(0.7, 0, 0.2, 1);
+  transition: padding-top 1s var(--ease-soft);
 }
 
 @media (min-width: 981px) {
@@ -128,6 +134,36 @@ button, a, label, summary, input, textarea, select {
   }
 
   body[data-view="project"] .lower { display: none; }
+
+  /* Home: centre the name / role / actions block on the vertical axis. The old
+     magic padding (50vh - 148px) left it riding above centre, which is what made
+     it look top-heavy. Flex centring keeps it true at every window height. */
+  body[data-view="home"] .col-left {
+    justify-content: center;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+
+  body[data-view="home"] .lower,
+  body[data-view="socials"] .lower { margin-top: 0; }
+
+  body:is([data-view="profile"], [data-view="skills"], [data-view="certs"], [data-view="stack"]) .stage {
+    align-items: start;
+  }
+
+  body:is([data-view="profile"], [data-view="skills"], [data-view="certs"], [data-view="stack"]) .col-left {
+    justify-content: flex-start;
+    padding-top: clamp(48px, 11vh, 120px);
+    padding-bottom: clamp(64px, 12vh, 140px);
+    min-height: 0;
+  }
+
+  body:is([data-view="profile"], [data-view="skills"], [data-view="certs"], [data-view="stack"]) .col-right {
+    position: sticky;
+    top: 0;
+    align-self: start;
+    height: 100dvh;
+  }
 }
 
 .identity,

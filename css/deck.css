@@ -1,10 +1,11 @@
 /* Delexo deck: the panel, portrait, project cards, browser frames and dots. */
 .col-right {
-  position: relative;
+  position: sticky;
+  top: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  align-self: stretch;
+  align-self: start;
   height: 100vh;
   height: 100dvh;
   min-height: 100vh;
@@ -12,7 +13,6 @@
   margin-right: -64px;
   padding-right: 64px;
   overflow: hidden;
-  transition: transform 0.75s var(--ease);
 }
 
 body[data-view="profile"] .col-right,
@@ -28,6 +28,8 @@ body[data-view="certs"] .panel,
 body[data-view="stack"] .panel {
   transform: translateX(72vw);
   pointer-events: none;
+  /* Opening the profile: the deck leaves straight away, no delay. */
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 body[data-view="project"] .col-right {
@@ -48,7 +50,9 @@ body[data-view="project"] .col-right {
   background: none;
   box-shadow: none;
   border-radius: 0;
-  transition: transform 1.2s cubic-bezier(0.7, 0, 0.2, 1);
+  /* Closing the profile: the portrait leaves first, then the deck glides back
+     in on the same curve. */
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1) 0.35s;
 }
 
 .portrait {
@@ -64,7 +68,9 @@ body[data-view="project"] .col-right {
   pointer-events: none;
   opacity: 1;
   transform: translate(calc(-50% + 72vw), -50%);
-  transition: transform 1.2s cubic-bezier(0.7, 0, 0.2, 1);
+  /* Leaving the profile: the image slides out first, with no delay, so the deck
+     can follow it back in. */
+  transition: transform 0.35s cubic-bezier(0.4, 0, 1, 1);
 }
 
 .portrait img {
@@ -82,6 +88,25 @@ body[data-view="stack"] .portrait {
   opacity: 1;
   transform: translate(-50%, -50%);
   pointer-events: auto;
+  /* Entering the profile: trail the deck slightly, not a full beat behind it. */
+  transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1) 0.12s;
+}
+
+@media (min-width: 981px) {
+  body.is-about-closing:is([data-view="profile"], [data-view="skills"], [data-view="certs"], [data-view="stack"]) .portrait {
+    transform: translate(calc(-50% + 72vw), -50%);
+    pointer-events: none;
+    transition: transform 0.35s cubic-bezier(0.4, 0, 1, 1);
+  }
+
+  body.is-about-closing:is([data-view="profile"], [data-view="skills"], [data-view="certs"], [data-view="stack"]) .panel {
+    transform: translateX(0);
+    opacity: 1;
+    pointer-events: auto;
+    transition:
+      transform 0.45s cubic-bezier(0.22, 1, 0.36, 1) 0.09s,
+      opacity 0.3s ease 0.09s;
+  }
 }
 
 .panel:empty { visibility: hidden; }
@@ -92,6 +117,7 @@ body[data-view="project"] .panel {
   aspect-ratio: 1;
   border-radius: 28px;
   align-self: center;
+  overflow: hidden;
 }
 
 .deck {
@@ -125,6 +151,7 @@ body[data-view="project"] .deck {
   text-align: left;
   box-shadow: none;
   transition: translate 0.45s var(--ease), scale 0.2s var(--ease);
+  container-type: inline-size;
 }
 
 body[data-view="home"] .card.is-on:hover,
@@ -144,15 +171,59 @@ body[data-view="project"] .card {
   opacity: 0;
   pointer-events: none;
   box-shadow: none;
+  transition: none;
 }
 
-body[data-view="project"] .card.is-on { opacity: 1; }
+body[data-view="project"] .card.is-on {
+  opacity: 1;
+  pointer-events: auto;
+  z-index: 1;
+}
 
-body[data-view="project"].is-project-sliding .panel { overflow: hidden; }
+/* While stepping, both the leaving and entering panels are visible full-bleed. */
+body[data-view="project"].is-project-sliding .card.is-project-exit,
+body[data-view="project"].is-project-sliding .card.is-project-enter {
+  opacity: 1;
+  pointer-events: none;
+}
 
-body[data-view="project"].is-project-sliding .card {
-  border-radius: 0;
-  transition: none;
+body[data-view="project"].is-project-sliding .card.is-project-exit {
+  z-index: 2;
+}
+
+body[data-view="project"].is-project-sliding .card.is-project-enter {
+  z-index: 3;
+}
+
+body[data-view="project"].is-project-sliding .panel {
+  overflow: hidden;
+}
+
+/* Open morph: one card fills the panel; the panel transform does the scale-up. */
+body.is-flipping[data-view="project"] .deck {
+  transform: none !important;
+  transition: none !important;
+  gap: 0 !important;
+}
+
+body.is-flipping[data-view="project"] .card {
+  position: absolute;
+  inset: 0;
+  width: auto;
+  height: auto;
+  aspect-ratio: auto;
+  visibility: hidden;
+  transition: none !important;
+}
+
+body.is-flipping[data-view="project"] .card.is-on {
+  visibility: visible;
+}
+
+/* Close morph: home layout is already painted; keep the deck frozen while the
+   panel downscales so it does not slide on its own. */
+body.is-closing .deck {
+  transition: none !important;
 }
 
 body.is-closing .col-right { overflow: visible; }
@@ -161,16 +232,36 @@ body.is-closing .card:not(.is-on) { visibility: hidden; }
 
 body.is-flipping .card:not(.is-on) { visibility: hidden; }
 
+/* The flying neighbours must stay visible even though the deck hides peeking
+   cards; their flight animation carries the opacity, so no fade is applied.
+   The panel also must not clip or paint-contain them mid-flight, so both the
+   contain and overflow rules relax for the duration of the morph. */
 body.is-flipping .panel,
-body.is-closing .panel { contain: paint; }
+body.is-closing .panel {
+  contain: none;
+  overflow: visible;
+  transition: none !important;
+}
+
+body.is-flipping .card.is-neighbor,
+body.is-closing .card.is-neighbor {
+  visibility: visible;
+  opacity: 1;
+  contain: none;
+}
 
 body.is-flipping .card,
 body.is-closing .card { transition: none; }
 
-body.is-flipping .browser,
-body.is-flipping .browser img,
+body.is-flipping .panel .card-name {
+  opacity: 0;
+  transition: opacity 700ms cubic-bezier(0.33, 1, 0.68, 1);
+}
+
 body.is-closing .browser,
-body.is-closing .browser img { transition: none; }
+body.is-closing .browser img,
+body.is-flipping .browser,
+body.is-flipping .browser img { transition: none; }
 
 .wash {
   position: absolute;
@@ -192,6 +283,9 @@ body.is-closing .browser img { transition: none; }
   top: 0;
   left: 0;
   z-index: 35;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
   padding: 8px 12px;
   background: #111;
   color: #fff;
@@ -203,6 +297,23 @@ body.is-closing .browser img { transition: none; }
   pointer-events: none;
   opacity: 0;
   transition: opacity 0.15s var(--ease);
+}
+
+.visit-tip__mark {
+  display: block;
+  flex: none;
+  object-fit: contain;
+}
+
+.visit-tip__mark--csusm {
+  height: 20px;
+  width: auto;
+  max-width: 96px;
+}
+
+.visit-tip__mark--harvard {
+  height: 22px;
+  width: auto;
 }
 
 .visit-tip.is-on { opacity: 1; }
@@ -223,12 +334,6 @@ body.is-closing .browser img { transition: none; }
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 18px 44px rgba(0, 0, 0, 0.18);
-  transition: width 0.98s var(--ease);
-}
-
-body[data-view="project"] .browser {
-  top: 50%;
-  width: 86%;
 }
 
 .browser-bar {
@@ -263,13 +368,13 @@ body[data-view="project"] .browser {
   display: block;
   width: 100%;
   height: 280px;
+  height: 47cqw;
+  min-height: 108px;
+  max-height: 420px;
   object-fit: cover;
   object-position: center 42%;
   background: #fafafa;
-  transition: height 0.98s var(--ease);
 }
-
-body[data-view="project"] .browser img { height: min(50vh, 460px); }
 
 .card.no-shot .browser { display: none; }
 
@@ -306,10 +411,15 @@ body[data-view="project"] .card-name { opacity: 0; }
 body[data-view="profile"] .dots,
 body[data-view="skills"] .dots,
 body[data-view="certs"] .dots,
-body[data-view="stack"] .dots,
-body[data-view="project"] .dots {
+body[data-view="stack"] .dots {
   opacity: 0;
   pointer-events: none;
+}
+
+body[data-view="project"] .dots {
+  opacity: 1;
+  pointer-events: auto;
+  z-index: 5;
 }
 
 .dot {
@@ -343,6 +453,11 @@ body[data-view="project"] .dots {
   transform-origin: top center;
 }
 
+/* Project full view has no auto-progress; keep the active chapter solid. */
+body[data-view="project"] .dot.is-on .pip-fill {
+  transform: scaleY(1);
+}
+
 .is-booting h1,
 .is-booting .role,
 .is-booting .actions {
@@ -352,7 +467,27 @@ body[data-view="project"] .dots {
 .is-booting .role { animation-delay: 0.08s; }
 .is-booting .actions { animation-delay: 0.16s; }
 
-.is-booting .card.is-on {
-  animation: fade 0.8s var(--ease) both;
+body.is-deck-boot[data-view="home"] #panel {
+  opacity: 0;
+  transition: none;
+}
+
+body.is-deck-boot.is-deck-enter[data-view="home"] #panel {
+  opacity: 1;
+  transition: opacity 0.45s ease !important;
+}
+
+body.is-deck-boot[data-view="home"] #dots {
+  opacity: 1;
+}
+
+body.is-deck-boot[data-view="home"] #dots .dot {
+  opacity: 0;
+  transition: none;
+}
+
+body.is-deck-boot.is-deck-enter[data-view="home"] #dots .dot {
+  opacity: 1;
+  transition: opacity 0.45s ease;
 }
 
