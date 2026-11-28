@@ -186,6 +186,23 @@ body[data-view="stack"] .lower {
   .more.is-out .branch:nth-child(2) { animation-delay: 0.1s; }
   .more.is-out .branch:nth-child(3) { animation-delay: 0.14s; }
   .more.is-out .branch:nth-child(4) { animation-delay: 0.18s; }
+
+  .more.is-swap-in .branch {
+    animation: fade 0.35s var(--ease) both;
+  }
+
+  .more.is-swap-in .branch:nth-child(1) { animation-delay: 0.02s; }
+  .more.is-swap-in .branch:nth-child(2) { animation-delay: 0.05s; }
+  .more.is-swap-in .branch:nth-child(3) { animation-delay: 0.08s; }
+  .more.is-swap-in .branch:nth-child(4) { animation-delay: 0.11s; }
+
+  /* Speed up exits during Profile <-> Links swaps only — never crush the Links entrance. */
+  body.is-cluster-swapping .social-row.is-out > *,
+  body.is-cluster-swapping .lower.is-out .prose p,
+  body.is-cluster-swapping .more.is-out .branch {
+    animation-duration: 0.22s;
+    animation-delay: 0s !important;
+  }
 }
 
 .social-row {
@@ -196,7 +213,12 @@ body[data-view="stack"] .lower {
   max-width: 420px;
 }
 
-.social-row[hidden] { display: none; }
+.social-row[hidden] { display: none !important; }
+
+/* Never let Links render outside the Links view (prevents floating icon leftovers). */
+body:not([data-view="socials"]) #social-row {
+  display: none !important;
+}
 
 .social-row.is-in > * {
   animation: rise 0.38s var(--ease) both;

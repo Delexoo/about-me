@@ -77,11 +77,7 @@ function openClusterTransition(anchorTop) {
   col.style.justifyContent = "";
   placeCluster();
   if (view !== "socials") return;
-  const row = document.getElementById("social-row");
-  if (!row || row.hidden) return;
-  row.classList.remove("is-in");
-  void row.offsetWidth;
-  row.classList.add("is-in");
+  revealSocialRow(true, true);
 }
 
 function openAboutCluster(anchorTop) {
@@ -106,8 +102,9 @@ function mobileDeckPairMs(dotCount, includeDots) {
 }
 const CLUSTER_CLOSE_PAD_MS = 680;
 const CLUSTER_CONTENT_OUT_MS = 420;
-const CLUSTER_SWAP_OUT_MS = 400;
-const CLUSTER_SWAP_PAD_MS = 720;
+const CLUSTER_SWAP_OUT_MS = 220;
+const CLUSTER_SWAP_ABOUT_OUT_MS = 280;
+const CLUSTER_SWAP_PAD_MS = 360;
 
 function measureHomePadding(head, tail, hideEls) {
   const col = document.querySelector(".col-left");
@@ -173,6 +170,7 @@ function abortClusterClose() {
   const col = document.querySelector(".col-left");
   if (col) col.style.transition = "";
   resetIdentityDrift(document.querySelector(".col-left .identity"));
+  resetSocialRowLayout();
 }
 
 function releaseClusterToHome(col, done) {
@@ -206,6 +204,41 @@ function releaseClusterToHome(col, done) {
   window.setTimeout(settle, 480);
 }
 
+function settleClusterIdentity(identity, firstTop, token, done) {
+  const complete = () => {
+    resetIdentityDrift(identity);
+    clusterHold = false;
+    placeCluster(true);
+    done();
+  };
+  if (!identity || !motionOk) {
+    complete();
+    return;
+  }
+  const dy = firstTop - identity.getBoundingClientRect().top;
+  identity.style.transition = "none";
+  identity.style.willChange = "transform";
+  identity.style.transform = Math.abs(dy) < 0.5 ? "translateY(0px)" : `translateY(${dy}px)`;
+  void identity.offsetWidth;
+  window.requestAnimationFrame(() => {
+    if (token !== clusterCloseToken) return;
+    identity.style.transition = `transform ${CLUSTER_SWAP_PAD_MS}ms cubic-bezier(0.22, 1, 0.36, 1)`;
+    identity.style.transform = "translateY(0px)";
+  });
+  window.setTimeout(() => {
+    if (token !== clusterCloseToken) return;
+    complete();
+  }, CLUSTER_SWAP_PAD_MS + 48);
+}
+
+function prepareAboutColumn(col) {
+  if (!col) return;
+  col.style.transition = "none";
+  col.style.justifyContent = "flex-start";
+  col.style.paddingTop = "";
+  void col.offsetWidth;
+}
+
 function swapSocialsForAboutTransition(next, done) {
   const token = ++clusterCloseToken;
   clusterSwitching = true;
@@ -214,7 +247,6 @@ function swapSocialsForAboutTransition(next, done) {
   setClusterActionToggles(true, false);
   const col = document.querySelector(".col-left");
   const identity = document.querySelector(".col-left .identity");
-  const anchorTop = identity ? identity.getBoundingClientRect().top : 0;
   const row = document.getElementById("social-row");
   let finished = false;
   const finish = () => {
@@ -223,33 +255,24 @@ function swapSocialsForAboutTransition(next, done) {
     clusterHold = false;
     clusterSwitching = false;
     document.body.classList.remove("is-cluster-swapping");
+    if (col) col.style.transition = "";
     done();
   };
-  if (!col || !dismissSocialRow()) {
+  const commitAbout = () => {
+    if (token !== clusterCloseToken) return;
+    const firstTop = identity ? identity.getBoundingClientRect().top : 0;
+    hideSocialRow(row);
     view = next;
     stopProgress();
+    prepareAboutColumn(col);
     paint();
-    openClusterTransition(anchorTop);
-    finish();
+    settleClusterIdentity(identity, firstTop, token, finish);
+  };
+  if (!col || !dismissSocialRow()) {
+    commitAbout();
     return;
   }
-  col.style.transition = `padding-top ${CLUSTER_SWAP_PAD_MS}ms var(--ease-soft)`;
-  window.setTimeout(() => {
-    if (token !== clusterCloseToken) return;
-    if (row) {
-      row.classList.remove("is-out", "is-in");
-      row.hidden = true;
-    }
-    view = next;
-    stopProgress();
-    paint();
-    openClusterTransition(anchorTop);
-    finish();
-  }, CLUSTER_SWAP_OUT_MS);
-  window.setTimeout(() => {
-    if (token !== clusterCloseToken) return;
-    finish();
-  }, CLUSTER_SWAP_OUT_MS + CLUSTER_SWAP_PAD_MS + 80);
+  window.setTimeout(commitAbout, CLUSTER_SWAP_OUT_MS);
 }
 
 function swapAboutForSocialsTransition(done) {
@@ -260,9 +283,9 @@ function swapAboutForSocialsTransition(done) {
   setClusterActionToggles(false, true);
   const col = document.querySelector(".col-left");
   const identity = document.querySelector(".col-left .identity");
-  const anchorTop = identity ? identity.getBoundingClientRect().top : 0;
   const lower = document.getElementById("lower");
   const more = document.getElementById("more");
+  const anchorTop = identity ? identity.getBoundingClientRect().top : 0;
   let finished = false;
   const finish = () => {
     if (finished) return;
@@ -270,41 +293,33 @@ function swapAboutForSocialsTransition(done) {
     clusterHold = false;
     clusterSwitching = false;
     document.body.classList.remove("is-cluster-swapping");
+    if (col) col.style.transition = "";
     done();
   };
-  if (!col || !dismissAboutContent()) {
-    view = "socials";
-    stopProgress();
-    clusterSwitching = false;
-    paint();
-    openClusterTransition(anchorTop);
-    finish();
-    return;
-  }
-  col.style.transition = `padding-top ${CLUSTER_SWAP_PAD_MS}ms var(--ease-soft)`;
-  window.setTimeout(() => {
+  const commitSocials = () => {
     if (token !== clusterCloseToken) return;
     if (lower) {
       lower.classList.remove("is-out", "fresh");
       lower.innerHTML = "";
     }
     if (more) {
-      more.classList.remove("is-out");
+      more.classList.remove("is-out", "is-swap-in");
       more.hidden = true;
       more.innerHTML = "";
     }
     lowerKey = `home|${lang}`;
     view = "socials";
     stopProgress();
-    clusterSwitching = false;
     paint();
+    resetSocialRowLayout();
     openClusterTransition(anchorTop);
     finish();
-  }, CLUSTER_SWAP_OUT_MS);
-  window.setTimeout(() => {
-    if (token !== clusterCloseToken) return;
-    finish();
-  }, CLUSTER_SWAP_OUT_MS + CLUSTER_SWAP_PAD_MS + 80);
+  };
+  if (!col || !dismissAboutContent()) {
+    commitSocials();
+    return;
+  }
+  window.setTimeout(commitSocials, CLUSTER_SWAP_ABOUT_OUT_MS);
 }
 
 function clusterCloseDone(done) {
@@ -333,8 +348,7 @@ function closeSocialsTransition(done) {
 
   window.setTimeout(() => {
     if (token !== clusterCloseToken) return;
-    row.classList.remove("is-out");
-    row.hidden = true;
+    hideSocialRow(row);
   }, CLUSTER_CONTENT_OUT_MS);
 
   window.setTimeout(() => {

@@ -43,7 +43,8 @@ function goTo(next) {
   if (!next || next === view) return;
   const mobileEarly = motionOk && window.innerWidth <= 980;
   if (mobileEarly && mobileNavBusy) return;
-  if (!mobileEarly && (clusterClosing || clusterSwitching) && isClusterToggleNav(next, view)) return;
+  // Never drop a Links/Profile click during a swap — abort the in-flight motion
+  // and continue so the new destination can open.
   if (clusterClosing || clusterSwitching) abortClusterClose();
   if (mobileEarly && !mobileNavBusy) cancelMobileDeckReveal();
   window.clearTimeout(mobileSocialsRevealTimer);
@@ -271,6 +272,21 @@ function goTo(next) {
     document.body.classList.add("is-dots-exit");
     void document.body.offsetWidth;
   }
+  const identity = document.querySelector(".col-left .identity");
+  const socialsToProject = prev === "socials" && next === "project";
+  const identityTop = socialsToProject && identity && window.innerWidth > 980
+    ? identity.getBoundingClientRect().top
+    : null;
+  if (socialsToProject) {
+    // Hide Links immediately so they cannot float over project info.
+    hideSocialRow();
+    const leftCol = col || document.querySelector(".col-left");
+    if (leftCol) {
+      leftCol.style.transition = "none";
+      leftCol.style.paddingTop = "";
+      leftCol.style.justifyContent = "";
+    }
+  }
   view = next;
   // Reset a scrolled mobile page instantly, before the panel starts sliding, so
   // the vertical scroll and the horizontal slide never overlap.
@@ -283,6 +299,19 @@ function goTo(next) {
     deckElLive.getAnimations().forEach((anim) => anim.cancel());
   }
   paint();
+  if (identityTop != null && identity && motionOk) {
+    const dy = identityTop - identity.getBoundingClientRect().top;
+    if (Math.abs(dy) > 0.5) {
+      identity.style.transition = "none";
+      identity.style.transform = `translateY(${dy}px)`;
+      void identity.offsetWidth;
+      window.requestAnimationFrame(() => {
+        identity.style.transition = "transform 0.5s cubic-bezier(0.22, 1, 0.36, 1)";
+        identity.style.transform = "translateY(0px)";
+      });
+      window.setTimeout(() => resetIdentityDrift(identity), 560);
+    }
+  }
   if (col) {
     void col.offsetWidth;
     col.style.transition = "";

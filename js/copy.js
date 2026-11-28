@@ -4,7 +4,9 @@ const copy = {
     language: "Language",
     major: "Computer Science",
     profileA:
-      'Hi, I&#39;m passionate about cybersecurity, digital forensics, and computer science. I&#39;m currently an undergraduate student at <a class="prose-link prose-link--csusm" href="https://www.csusm.edu/" target="_blank" rel="noopener noreferrer">California State University San Marcos<span class="tip" hidden>Visit CSUSM<img class="visit-tip__mark visit-tip__mark--csusm" src="assets/schools/csusm-athletics.png" alt="" width="88" height="20" decoding="async" /></span></a>, pursuing a degree in Computer Science while completing <a class="prose-link prose-link--crimson" href="https://harvardonline.harvard.edu/" target="_blank" rel="noopener noreferrer">Harvard&#39;s Cybersecurity for Business<span class="tip" hidden>Visit Harvard<img class="visit-tip__mark visit-tip__mark--harvard" src="assets/schools/harvard-crest.png" alt="" width="18" height="22" decoding="async" /></span></a> credential.',
+      "Hi, I&#39;m passionate about cybersecurity, digital forensics, and computer science.",
+    profileB:
+      'I&#39;m currently an undergraduate student at <a class="prose-link prose-link--csusm" href="https://www.csusm.edu/" target="_blank" rel="noopener noreferrer">California State University San Marcos<span class="tip" hidden>Visit CSUSM<img class="visit-tip__mark visit-tip__mark--csusm" src="assets/schools/csusm-athletics.png" alt="" width="88" height="20" decoding="async" /></span></a> for Computer Science and pursuing <a class="prose-link prose-link--crimson" href="https://harvardonline.harvard.edu/" target="_blank" rel="noopener noreferrer">Harvard&#39;s Cybersecurity for Business<span class="tip" hidden>Visit Harvard<img class="visit-tip__mark visit-tip__mark--harvard" src="assets/schools/harvard-crest.png" alt="" width="18" height="22" decoding="async" /></span></a> program.',
     projects: "Projects",
     skills: "Skills",
     certs: "Certificates",
@@ -40,7 +42,9 @@ const copy = {
     language: "Idioma",
     major: "Ciencias de la Computación",
     profileA:
-      'Hola, soy apasionado por la ciberseguridad, la informática forense y la informática. Actualmente soy estudiante de pregrado en <a class="prose-link prose-link--csusm" href="https://www.csusm.edu/" target="_blank" rel="noopener noreferrer">California State University San Marcos<span class="tip" hidden>Visitar CSUSM<img class="visit-tip__mark visit-tip__mark--csusm" src="assets/schools/csusm-athletics.png" alt="" width="88" height="20" decoding="async" /></span></a>, cursando la licenciatura en Ciencias de la Computación y completando la credencial <a class="prose-link prose-link--crimson" href="https://harvardonline.harvard.edu/" target="_blank" rel="noopener noreferrer">Cybersecurity for Business de Harvard<span class="tip" hidden>Visitar Harvard<img class="visit-tip__mark visit-tip__mark--harvard" src="assets/schools/harvard-crest.png" alt="" width="18" height="22" decoding="async" /></span></a>.',
+      "Hola, soy apasionado por la ciberseguridad, la informática forense y la informática.",
+    profileB:
+      'Actualmente soy estudiante de pregrado en <a class="prose-link prose-link--csusm" href="https://www.csusm.edu/" target="_blank" rel="noopener noreferrer">California State University San Marcos<span class="tip" hidden>Visitar CSUSM<img class="visit-tip__mark visit-tip__mark--csusm" src="assets/schools/csusm-athletics.png" alt="" width="88" height="20" decoding="async" /></span></a> en Ciencias de la Computación y curso el programa <a class="prose-link prose-link--crimson" href="https://harvardonline.harvard.edu/" target="_blank" rel="noopener noreferrer">Cybersecurity for Business de Harvard<span class="tip" hidden>Visitar Harvard<img class="visit-tip__mark visit-tip__mark--harvard" src="assets/schools/harvard-crest.png" alt="" width="18" height="22" decoding="async" /></span></a>.',
     projects: "Proyectos",
     skills: "Habilidades",
     certs: "Certificados",

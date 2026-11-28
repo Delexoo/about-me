@@ -69,7 +69,7 @@ const projects = [
     href: "https://orbint.net",
     repo: "https://github.com/Delexoo/OrbINT",
     host: "orbint.net",
-    image: "assets/orbint.webp",
+    image: "assets/orbint.gif?v=2",
     icon: "assets/apps/orbint.svg",
     tint: "#e5eef2",
     wash: "#d5e4ec",

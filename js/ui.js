@@ -123,51 +123,86 @@ function dismissSocialRow() {
   return true;
 }
 
+function resetSocialRowLayout(row) {
+  const el = row || document.getElementById("social-row");
+  if (!el) return;
+  el.style.position = "";
+  el.style.left = "";
+  el.style.top = "";
+  el.style.width = "";
+  el.style.margin = "";
+  el.style.marginTop = "";
+  el.style.zIndex = "";
+  el.style.opacity = "";
+  el.style.pointerEvents = "";
+  el.style.transform = "";
+  el.style.transition = "";
+  el.style.overflow = "";
+  el.style.maxHeight = "";
+  delete el.dataset.collapsing;
+}
+
+function hideSocialRow(row) {
+  const el = row || document.getElementById("social-row");
+  if (!el) return;
+  clearTimeout(socialTimer);
+  // Hide before clearing is-out so the sink animation never snaps back to visible.
+  el.hidden = true;
+  el.classList.remove("is-out", "is-in");
+  resetSocialRowLayout(el);
+}
+
 function revealMobileSocialRow() {
   document.body.classList.remove("is-socials-await");
   const row = document.getElementById("social-row");
   if (!row || view !== "socials") return;
+  resetSocialRowLayout(row);
   row.classList.remove("is-out");
+  row.hidden = false;
   if (!motionOk) return;
+  void row.offsetWidth;
+  row.classList.add("is-in");
+}
+
+function revealSocialRow(animated, forceReplay) {
+  const row = document.getElementById("social-row");
+  if (!row || view !== "socials") return;
+  clearTimeout(socialTimer);
+  resetSocialRowLayout(row);
+  row.classList.remove("is-out");
+  row.hidden = false;
+  if (!animated || !booted || !motionOk) return;
+  if (window.innerWidth <= 980 && document.body.classList.contains("is-socials-await")) {
+    row.classList.remove("is-in");
+    return;
+  }
+  if (!forceReplay && row.classList.contains("is-in")) return;
+  row.classList.remove("is-in");
   void row.offsetWidth;
   row.classList.add("is-in");
 }
 
 function paintSocialRow() {
   const row = document.getElementById("social-row");
+  if (!row) return;
   if (socialKey !== lang) {
     socialKey = lang;
     row.innerHTML = socialLinks();
   }
   const show = view === "socials";
-  if (clusterClosing || clusterSwitching) return;
-  clearTimeout(socialTimer);
   if (show) {
+    clearTimeout(socialTimer);
+    resetSocialRowLayout(row);
     row.classList.remove("is-out");
     row.hidden = false;
-    if (booted && motionOk && !clusterHold) {
-      if (window.innerWidth <= 980 && document.body.classList.contains("is-socials-await")) {
-        row.classList.remove("is-in");
-        return;
-      }
-      if (!row.classList.contains("is-in")) {
-        void row.offsetWidth;
-        row.classList.add("is-in");
-      }
-    }
+    if (clusterClosing || clusterSwitching || clusterHold) return;
+    revealSocialRow(true);
     return;
   }
-  row.classList.remove("is-in");
-  if (row.hidden) return;
-  if (!booted || !motionOk) {
-    row.hidden = true;
-    return;
-  }
-  row.classList.add("is-out");
-  socialTimer = setTimeout(() => {
-    row.classList.remove("is-out");
-    row.hidden = true;
-  }, 520);
+  // Outside Links, always hard-hide. Never leave a fading/fixed row over project UI.
+  if (clusterClosing || clusterSwitching) return;
+  clearTimeout(socialTimer);
+  hideSocialRow(row);
 }
 
 function paintNote() {
@@ -331,7 +366,7 @@ function paintLower() {
     return;
   }
   lower.classList.remove("fresh");
-  lower.innerHTML = `<div class="prose"><p>${t.profileA}</p></div>`;
+  lower.innerHTML = `<div class="prose"><p>${t.profileA}</p><p>${t.profileB}</p></div>`;
   more.hidden = false;
   more.innerHTML = `
     <div class="branches">
@@ -343,6 +378,12 @@ function paintLower() {
   `;
   bindBranches(more);
   if (!booted || !motionOk) return;
+  // Cluster swaps already move the column; skip the heavy infoUp entrance.
+  if (clusterSwitching) {
+    lower.classList.remove("fresh");
+    more.classList.add("is-swap-in");
+    return;
+  }
   void lower.offsetWidth;
   lower.classList.add("fresh");
   if (window.innerWidth <= 980) {

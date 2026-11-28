@@ -158,6 +158,15 @@ button, a, label, summary, input, textarea, select {
     min-height: 0;
   }
 
+  /* Keep the left column from hard-jumping while Links <-> Profile swaps. */
+  body.is-cluster-swapping .col-left {
+    transition: none;
+  }
+
+  body.is-cluster-swapping .identity {
+    will-change: transform;
+  }
+
   body:is([data-view="profile"], [data-view="skills"], [data-view="certs"], [data-view="stack"]) .col-right {
     position: sticky;
     top: 0;
