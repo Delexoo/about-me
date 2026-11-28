@@ -69,7 +69,8 @@ const projects = [
     href: "https://orbint.net",
     repo: "https://github.com/Delexoo/OrbINT",
     host: "orbint.net",
-    image: "assets/orbint.gif?v=2",
+    image: "assets/orbint-poster.webp?v=1",
+    imageAnim: "assets/orbint.webp?v=3",
     icon: "assets/apps/orbint.svg",
     tint: "#e5eef2",
     wash: "#d5e4ec",
@@ -203,6 +204,14 @@ const stack = [
 
 const stripeHref = "https://buy.stripe.com/9B63cu3RE2ouaKgcHLcjS00";
 
+// Bump this when the profile content ships a meaningful update.
+const profileUpdatedAt = "2026-11-28T07:25:00.000Z";
+
+const profileViewsEndpoint = {
+  hit: "https://abacus.jasoncameron.dev/hit/delexo/profile-views",
+  get: "https://abacus.jasoncameron.dev/get/delexo/profile-views",
+};
+
 const socials = [
   { href: "mailto:teambrilliantt@hotmail.com", en: "Email", es: "Correo", src: "assets/socials/gmail.svg" },
   { href: "tel:+14013000957", en: "Phone", es: "Teléfono", src: "assets/socials/iphone.jpg" },
@@ -211,7 +220,7 @@ const socials = [
   { discord: true, en: "Discord", es: "Discord", src: "assets/socials/discord.webp" },
   { href: "https://open.spotify.com/user/31bkbmqthacfrfchjncyj2kpvase", en: "Spotify", es: "Spotify", src: "assets/socials/spotify.webp" },
   { href: "https://namemc.com/Delexo", en: "NameMC", es: "NameMC", src: "assets/socials/namemc.webp?v=3" },
-  { href: "https://gdbrowser.com/u/vans", en: "GDBrowser", es: "GDBrowser", src: "assets/socials/gdbrowser.png?v=3" },
+  { href: "https://gdbrowser.com/u/vans", en: "GDBrowser", es: "GDBrowser", src: "assets/socials/gdbrowser.webp?v=4" },
   { href: stripeHref, en: "Donate", es: "Donar", src: "assets/socials/donate.svg?v=2" },
 ];
 

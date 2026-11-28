@@ -6,7 +6,7 @@ const copy = {
     profileA:
       "Hi, I&#39;m passionate about cybersecurity, digital forensics, and computer science.",
     profileB:
-      'I&#39;m currently an undergraduate student at <a class="prose-link prose-link--csusm" href="https://www.csusm.edu/" target="_blank" rel="noopener noreferrer">California State University San Marcos<span class="tip" hidden>Visit CSUSM<img class="visit-tip__mark visit-tip__mark--csusm" src="assets/schools/csusm-athletics.png" alt="" width="88" height="20" decoding="async" /></span></a> for Computer Science and pursuing <a class="prose-link prose-link--crimson" href="https://harvardonline.harvard.edu/" target="_blank" rel="noopener noreferrer">Harvard&#39;s Cybersecurity for Business<span class="tip" hidden>Visit Harvard<img class="visit-tip__mark visit-tip__mark--harvard" src="assets/schools/harvard-crest.png" alt="" width="18" height="22" decoding="async" /></span></a> program.',
+      'I&#39;m currently an undergraduate student at <a class="prose-link prose-link--csusm" href="https://www.csusm.edu/" target="_blank" rel="noopener noreferrer">California State University San Marcos<span class="tip" hidden>Visit CSUSM<img class="visit-tip__mark visit-tip__mark--csusm" src="assets/schools/csusm-athletics.webp" alt="" width="88" height="20" decoding="async" /></span></a> for Computer Science and pursuing <a class="prose-link prose-link--crimson" href="https://harvardonline.harvard.edu/" target="_blank" rel="noopener noreferrer">Harvard&#39;s Cybersecurity for Business<span class="tip" hidden>Visit Harvard<img class="visit-tip__mark visit-tip__mark--harvard" src="assets/schools/harvard-crest.webp" alt="" width="18" height="22" decoding="async" /></span></a> program.',
     projects: "Projects",
     skills: "Skills",
     certs: "Certificates",
@@ -34,6 +34,16 @@ const copy = {
     close: "Close",
     open: "Open site",
     visit: "View project",
+    lastUpdated: "Last updated",
+    profileViews: "Profile Views",
+    ago: {
+      second: ["Second Ago", "Seconds Ago"],
+      minute: ["Minute Ago", "Minutes Ago"],
+      hour: ["Hour Ago", "Hours Ago"],
+      day: ["Day Ago", "Days Ago"],
+      week: ["Week Ago", "Weeks Ago"],
+      month: ["Month Ago", "Months Ago"],
+    },
     discordRequest: "<strong>delexo</strong> sent you a friend request.",
     discordAccept: "Accept",
     discordIgnore: "Ignore",
@@ -44,7 +54,7 @@ const copy = {
     profileA:
       "Hola, soy apasionado por la ciberseguridad, la informática forense y la informática.",
     profileB:
-      'Actualmente soy estudiante de pregrado en <a class="prose-link prose-link--csusm" href="https://www.csusm.edu/" target="_blank" rel="noopener noreferrer">California State University San Marcos<span class="tip" hidden>Visitar CSUSM<img class="visit-tip__mark visit-tip__mark--csusm" src="assets/schools/csusm-athletics.png" alt="" width="88" height="20" decoding="async" /></span></a> en Ciencias de la Computación y curso el programa <a class="prose-link prose-link--crimson" href="https://harvardonline.harvard.edu/" target="_blank" rel="noopener noreferrer">Cybersecurity for Business de Harvard<span class="tip" hidden>Visitar Harvard<img class="visit-tip__mark visit-tip__mark--harvard" src="assets/schools/harvard-crest.png" alt="" width="18" height="22" decoding="async" /></span></a>.',
+      'Actualmente soy estudiante de pregrado en <a class="prose-link prose-link--csusm" href="https://www.csusm.edu/" target="_blank" rel="noopener noreferrer">California State University San Marcos<span class="tip" hidden>Visitar CSUSM<img class="visit-tip__mark visit-tip__mark--csusm" src="assets/schools/csusm-athletics.webp" alt="" width="88" height="20" decoding="async" /></span></a> en Ciencias de la Computación y curso el programa <a class="prose-link prose-link--crimson" href="https://harvardonline.harvard.edu/" target="_blank" rel="noopener noreferrer">Cybersecurity for Business de Harvard<span class="tip" hidden>Visitar Harvard<img class="visit-tip__mark visit-tip__mark--harvard" src="assets/schools/harvard-crest.webp" alt="" width="18" height="22" decoding="async" /></span></a>.',
     projects: "Proyectos",
     skills: "Habilidades",
     certs: "Certificados",
@@ -72,6 +82,16 @@ const copy = {
     close: "Cerrar",
     open: "Abrir sitio",
     visit: "Ver proyecto",
+    lastUpdated: "Última actualización",
+    profileViews: "Visitas al perfil",
+    ago: {
+      second: ["segundo", "segundos"],
+      minute: ["minuto", "minutos"],
+      hour: ["hora", "horas"],
+      day: ["día", "días"],
+      week: ["semana", "semanas"],
+      month: ["mes", "meses"],
+    },
     discordRequest: "<strong>delexo</strong> te envió una solicitud de amistad.",
     discordAccept: "Aceptar",
     discordIgnore: "Ignorar",

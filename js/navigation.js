@@ -166,6 +166,7 @@ function goTo(next) {
         return;
       }
       view = "socials";
+      holdMobilePanelOffscreen();
       document.body.classList.add("is-socials-await");
       paint();
       revealMobileInfo();
@@ -175,6 +176,50 @@ function goTo(next) {
         releaseMobileNav(exitToken);
       }, MOBILE_SOCIALS_LINKS_DELAY_MS);
     });
+    return;
+  }
+  // Profile ↔ Links: never run deck enter/exit — that was sliding Mochi under the icons.
+  const mobileAboutToSocials = mobile && inAbout(prev) && next === "socials";
+  if (mobileAboutToSocials) {
+    lockMobileNav();
+    stopProgress();
+    document.body.classList.add("is-about-exit");
+    const hadAbout = dismissAboutContent();
+    const wait = motionOk && hadAbout ? CLUSTER_SWAP_ABOUT_OUT_MS : 0;
+    window.setTimeout(() => {
+      if (exitToken !== aboutExitToken) return;
+      document.body.classList.remove("is-about-exit");
+      view = "socials";
+      holdMobilePanelOffscreen();
+      document.body.classList.add("is-socials-await");
+      paint();
+      mobileSocialsRevealTimer = window.setTimeout(() => {
+        if (exitToken !== aboutExitToken || view !== "socials") return;
+        revealMobileSocialRow();
+        releaseMobileNav(exitToken);
+      }, MOBILE_SOCIALS_LINKS_DELAY_MS);
+    }, wait);
+    return;
+  }
+  const mobileSocialsToAbout = mobile && prev === "socials" && inAbout(next);
+  if (mobileSocialsToAbout) {
+    lockMobileNav();
+    stopProgress();
+    const row = document.getElementById("social-row");
+    if (row && !row.hidden && motionOk) {
+      row.classList.remove("is-in");
+      void row.offsetWidth;
+      row.classList.add("is-out");
+    }
+    window.setTimeout(() => {
+      if (exitToken !== aboutExitToken) return;
+      hideSocialRow(row);
+      view = next;
+      holdMobilePanelOffscreen();
+      paint();
+      revealMobileInfo();
+      releaseMobileNav(exitToken);
+    }, motionOk ? MOBILE_SOCIALS_ROW_OUT_MS : 0);
     return;
   }
   if (deckExit) {

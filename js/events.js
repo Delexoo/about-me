@@ -194,6 +194,21 @@ function bindCursor() {
     visit.dataset.corner = corner;
     visit.style.transform = `translate(${left}px, ${top}px)`;
   };
+  let raf = 0;
+  const tick = () => {
+    raf = 0;
+    const follow = motionOk ? 0.45 : 1;
+    x += (tx - x) * follow;
+    y += (ty - y) * follow;
+    cursor.style.transform = `translate(${x - 5}px, ${y - 4.2}px)`;
+    placeVisit();
+    if (active && (Math.abs(tx - x) > 0.15 || Math.abs(ty - y) > 0.15)) {
+      raf = window.requestAnimationFrame(tick);
+    }
+  };
+  const kick = () => {
+    if (!raf) raf = window.requestAnimationFrame(tick);
+  };
   window.addEventListener("pointermove", (event) => {
     tx = event.clientX;
     ty = event.clientY;
@@ -202,26 +217,25 @@ function bindCursor() {
     const link = event.target.closest && event.target.closest(".prose-link");
     const linkTipEl = link ? link.querySelector(".tip") : null;
     linkTipHtml = linkTipEl ? linkTipEl.innerHTML.trim() : "";
-    if (active) return;
-    x = tx;
-    y = ty;
-    active = true;
-    cursor.classList.add("is-on");
+    if (!active) {
+      x = tx;
+      y = ty;
+      active = true;
+      cursor.classList.add("is-on");
+    }
+    placeVisit();
+    kick();
   });
   document.addEventListener("pointerleave", () => {
     active = false;
     overCard = false;
     linkTipHtml = "";
     cursor.classList.remove("is-on");
+    if (visit) visit.classList.remove("is-on");
+    if (raf) {
+      window.cancelAnimationFrame(raf);
+      raf = 0;
+    }
   });
-  const tick = () => {
-    const follow = motionOk ? 0.45 : 1;
-    x += (tx - x) * follow;
-    y += (ty - y) * follow;
-    cursor.style.transform = `translate(${x - 5}px, ${y - 4.2}px)`;
-    placeVisit();
-    window.requestAnimationFrame(tick);
-  };
-  tick();
 }
 

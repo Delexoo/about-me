@@ -1,17 +1,26 @@
 // Delexo deck: card markup, deck placement, auto-advance and project slides.
 function slideMarkup(project, i, clone) {
+  const eager = !clone && i === 0;
   return `
     <button type="button" class="card${clone ? " is-clone" : ""}" data-card="${i}"${clone ? ' data-clone="1"' : ""} style="--wash: ${project.wash}">
       <div class="wash"></div>
       <div class="panel-body">
         <div class="browser">
           <div class="browser-bar"><i></i><i></i><i></i><span>${esc(project.host)}</span></div>
-          <img src="${project.image}" alt="" draggable="false" />
+          <img src="${project.image}" alt="" draggable="false" decoding="async"${eager ? ' fetchpriority="high"' : ' loading="lazy"'} />
         </div>
         <span class="card-name">${esc(project.name)}</span>
       </div>
     </button>
   `;
+}
+
+function syncCardMedia(card, on) {
+  const project = projects[Number(card.dataset.card)];
+  const img = card.querySelector(".browser img");
+  if (!project || !img) return;
+  const want = on && project.imageAnim ? project.imageAnim : project.image;
+  if (img.getAttribute("src") !== want) img.setAttribute("src", want);
 }
 
 let deckReady = false;
@@ -32,6 +41,7 @@ function placeDeck(wrapDirection, forceSnap) {
     const i = Number(card.dataset.card);
     const on = !card.hasAttribute("data-clone") && i === index;
     card.classList.toggle("is-on", on);
+    syncCardMedia(card, on);
     card.tabIndex = browsing && on ? 0 : -1;
     card.setAttribute("aria-label", `${on ? openWord : showWord} ${projects[i].name}`);
     if (on) card.setAttribute("aria-current", "true");

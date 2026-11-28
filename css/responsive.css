@@ -170,10 +170,14 @@
     transition: none;
   }
 
+  /* Links never shares the screen with the project deck — beat leftover
+     is-deck-enter / inline styles that used to leave Mochi under the icons. */
+  body[data-view="socials"] #panel,
   body[data-view="socials"] .panel {
-    transform: translateX(106%);
-    opacity: 0;
-    pointer-events: none;
+    transform: translateX(106%) !important;
+    opacity: 0 !important;
+    visibility: hidden;
+    pointer-events: none !important;
     transition: none !important;
   }
 
@@ -229,6 +233,14 @@
     max-width: none;
   }
 
+  body:is([data-view="profile"], [data-view="skills"], [data-view="certs"], [data-view="stack"]) #more .profile-meta {
+    width: 100%;
+    max-width: none;
+    margin-top: 28px;
+    margin-bottom: 12px;
+    text-align: left;
+  }
+
   body:is([data-view="profile"], [data-view="skills"], [data-view="certs"], [data-view="stack"]) #more .skill-list,
   body:is([data-view="profile"], [data-view="skills"], [data-view="certs"], [data-view="stack"]) #more .cert-list,
   body:is([data-view="profile"], [data-view="skills"], [data-view="certs"], [data-view="stack"]) #more .stack {
@@ -280,24 +292,21 @@
     transform: translateX(0);
   }
 
-  body.is-deck-await[data-view="home"] #panel,
-  body.is-deck-await[data-view="socials"] #panel {
+  body.is-deck-await[data-view="home"] #panel {
     transform: translateX(106%);
     opacity: 0;
     transition: none !important;
     pointer-events: none;
   }
 
-  body.is-deck-boot[data-view="home"] #panel,
-  body.is-deck-boot[data-view="socials"] #panel {
+  body.is-deck-boot[data-view="home"] #panel {
     opacity: 0;
     transform: none !important;
     transition: none !important;
     pointer-events: none;
   }
 
-  body.is-deck-boot.is-deck-enter[data-view="home"] #panel,
-  body.is-deck-boot.is-deck-enter[data-view="socials"] #panel {
+  body.is-deck-boot.is-deck-enter[data-view="home"] #panel {
     opacity: 1;
     transform: none !important;
     transition: opacity 0.42s ease !important;
@@ -324,21 +333,17 @@
   }
 
   body.is-deck-enter:not(.is-deck-boot)[data-view="home"] #panel,
-  body.is-deck-enter:not(.is-deck-boot)[data-view="socials"] #panel,
-  body.is-deck-exit[data-view="home"] #panel,
-  body.is-deck-exit[data-view="socials"] #panel {
+  body.is-deck-exit[data-view="home"] #panel {
     transition: transform 0.52s var(--ease), opacity 0.42s ease !important;
   }
 
-  body.is-deck-enter:not(.is-deck-boot)[data-view="home"] #panel,
-  body.is-deck-enter:not(.is-deck-boot)[data-view="socials"] #panel {
+  body.is-deck-enter:not(.is-deck-boot)[data-view="home"] #panel {
     transform: translateX(0);
     opacity: 1;
     pointer-events: auto;
   }
 
-  body.is-deck-exit[data-view="home"] #panel,
-  body.is-deck-exit[data-view="socials"] #panel {
+  body.is-deck-exit[data-view="home"] #panel {
     transform: translateX(106%);
     opacity: 0;
     pointer-events: none;

@@ -660,6 +660,23 @@ let mobileChapterTimer = 0;
 function cancelMobileDeckReveal() {
   deckRevealToken += 1;
   window.clearTimeout(mobileChapterTimer);
+  document.body.classList.remove(
+    "is-deck-enter",
+    "is-deck-exit",
+    "is-deck-await",
+    "is-dots-reveal",
+    "is-dots-exit"
+  );
+  clearMobileDeckPanelInline();
+}
+
+function holdMobilePanelOffscreen() {
+  const panel = document.getElementById("panel");
+  if (!panel) return;
+  panel.getAnimations().forEach((anim) => anim.cancel());
+  panel.style.transition = "none";
+  panel.style.transform = "translateX(106%)";
+  panel.style.opacity = "0";
 }
 
 function clearMobileDeckPanelInline() {
@@ -747,15 +764,8 @@ function mobileDeckRevealExit(options) {
     document.body.classList.remove("is-deck-exit", "is-dots-exit", "is-dots-ready");
     if (!panel) return;
     panel.getAnimations().forEach((anim) => anim.cancel());
-    if (holdPanelOffscreen) {
-      panel.style.transition = "none";
-      panel.style.transform = "translateX(106%)";
-      panel.style.opacity = "0";
-    } else {
-      panel.style.transition = "";
-      panel.style.transform = "";
-      panel.style.opacity = "";
-    }
+    if (holdPanelOffscreen) holdMobilePanelOffscreen();
+    else clearMobileDeckPanelInline();
   };
   if (!useDots) {
     snapMobileDeckMotion(false, false);

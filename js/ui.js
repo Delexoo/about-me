@@ -349,14 +349,142 @@ function bindBranches(root) {
   });
 }
 
+let profileMetaTimer = 0;
+let profileViewsCount = null;
+let profileViewsPromise = null;
+
+function formatProfileAgo(fromMs) {
+  const t = copy[lang];
+  const units = t.ago;
+  const elapsed = Math.max(0, Date.now() - fromMs);
+  const second = 1000;
+  const minute = 60 * second;
+  const hour = 60 * minute;
+  const day = 24 * hour;
+  const week = 7 * day;
+  const month = 30 * day;
+  let value;
+  let key;
+  if (elapsed < minute) {
+    value = Math.max(1, Math.floor(elapsed / second));
+    key = "second";
+  } else if (elapsed < hour) {
+    value = Math.floor(elapsed / minute);
+    key = "minute";
+  } else if (elapsed < day) {
+    value = Math.floor(elapsed / hour);
+    key = "hour";
+  } else if (elapsed < week) {
+    value = Math.floor(elapsed / day);
+    key = "day";
+  } else if (elapsed < month) {
+    value = Math.floor(elapsed / week);
+    key = "week";
+  } else {
+    value = Math.max(1, Math.floor(elapsed / month));
+    key = "month";
+  }
+  const label = units[key][value === 1 ? 0 : 1];
+  if (lang === "es") return `${t.lastUpdated}: hace ${value} ${label}`;
+  return `${t.lastUpdated}: ${value} ${label}`;
+}
+
+function formatProfileViews(count) {
+  const label = copy[lang].profileViews;
+  if (count == null || Number.isNaN(count)) return `${label}: —`;
+  return `${label}: ${Number(count).toLocaleString(lang === "es" ? "es" : "en")}`;
+}
+
+function paintProfileMeta() {
+  const updated = document.getElementById("profile-updated");
+  const views = document.getElementById("profile-views");
+  if (!updated && !views) return;
+  const stamped = Date.parse(profileUpdatedAt);
+  if (updated && Number.isFinite(stamped)) {
+    updated.textContent = formatProfileAgo(stamped);
+  }
+  if (views) views.textContent = formatProfileViews(profileViewsCount);
+}
+
+function stopProfileMetaTicker() {
+  window.clearInterval(profileMetaTimer);
+  profileMetaTimer = 0;
+}
+
+function startProfileMetaTicker() {
+  stopProfileMetaTicker();
+  paintProfileMeta();
+  profileMetaTimer = window.setInterval(paintProfileMeta, 1000);
+}
+
+function readCachedProfileViews() {
+  try {
+    const raw = localStorage.getItem("delexo-profile-views");
+    if (raw == null) return null;
+    const n = Number(raw);
+    return Number.isFinite(n) ? n : null;
+  } catch (err) {
+    return null;
+  }
+}
+
+function writeCachedProfileViews(count) {
+  try {
+    localStorage.setItem("delexo-profile-views", String(count));
+  } catch (err) { /* ignore */ }
+}
+
+async function fetchProfileViews(hit) {
+  const url = hit ? profileViewsEndpoint.hit : profileViewsEndpoint.get;
+  const res = await fetch(url, { cache: "no-store" });
+  if (!res.ok) throw new Error(`views ${res.status}`);
+  const data = await res.json();
+  const count = Number(data.value);
+  if (!Number.isFinite(count)) throw new Error("views bad payload");
+  return count;
+}
+
+function trackProfileViews() {
+  if (profileViewsPromise) return profileViewsPromise;
+  const cached = readCachedProfileViews();
+  if (cached != null) profileViewsCount = cached;
+  let shouldHit = true;
+  try {
+    shouldHit = sessionStorage.getItem("delexo-profile-hit") !== "1";
+  } catch (err) { /* ignore */ }
+  profileViewsPromise = (async () => {
+    try {
+      const count = await fetchProfileViews(shouldHit);
+      profileViewsCount = count;
+      writeCachedProfileViews(count);
+      if (shouldHit) {
+        try { sessionStorage.setItem("delexo-profile-hit", "1"); } catch (err) { /* ignore */ }
+      }
+    } catch (err) {
+      if (profileViewsCount == null) {
+        profileViewsCount = (cached == null ? 0 : cached) + (shouldHit ? 1 : 0);
+        writeCachedProfileViews(profileViewsCount);
+        try { sessionStorage.setItem("delexo-profile-hit", "1"); } catch (e) { /* ignore */ }
+      }
+    }
+    paintProfileMeta();
+    return profileViewsCount;
+  })();
+  return profileViewsPromise;
+}
+
 function paintLower() {
   const key = `${view}|${lang}`;
-  if (key === lowerKey) return;
+  if (key === lowerKey) {
+    if (inAbout(view)) paintProfileMeta();
+    return;
+  }
   lowerKey = key;
   const lower = document.getElementById("lower");
   const more = document.getElementById("more");
   const t = copy[lang];
   if (!inAbout(view)) {
+    stopProfileMetaTicker();
     if (clusterClosing || clusterSwitching) return;
     lower.classList.remove("fresh", "is-out");
     lower.innerHTML = "";
@@ -375,8 +503,14 @@ function paintLower() {
       ${branchHtml("stack", t.stack, stackHtml())}
       ${branchHtml("projects", t.projects, projectsHtml())}
     </div>
+    <footer class="profile-meta">
+      <p class="profile-meta__line" id="profile-updated"></p>
+      <p class="profile-meta__line" id="profile-views"></p>
+    </footer>
   `;
   bindBranches(more);
+  trackProfileViews();
+  startProfileMetaTicker();
   if (!booted || !motionOk) return;
   // Cluster swaps already move the column; skip the heavy infoUp entrance.
   if (clusterSwitching) {

@@ -348,8 +348,26 @@ body:not([data-view="socials"]) #social-row {
   border-bottom: 1px solid rgba(20, 20, 20, 0.07);
 }
 
-.branch:last-child {
-  border-bottom: 0;
+.branches .branch:last-child {
+  border-bottom: 1px solid rgba(20, 20, 20, 0.07);
+}
+
+.profile-meta {
+  width: min(520px, 100%);
+  margin: 28px 0 0;
+  padding-top: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.profile-meta__line {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: #9a9a9a;
+  line-height: 1.35;
 }
 
 .branch summary {
@@ -626,6 +644,15 @@ body:not([data-view="socials"]) #social-row {
     width: 100%;
     max-width: none;
     margin-top: 8px;
+  }
+
+  body:is([data-view="profile"], [data-view="skills"], [data-view="certs"], [data-view="stack"]) .more .profile-meta {
+    width: 100%;
+    max-width: none;
+    align-items: flex-start;
+    text-align: left;
+    margin-top: 36px;
+    margin-bottom: 48px;
   }
 
   body:is([data-view="profile"], [data-view="skills"], [data-view="certs"], [data-view="stack"]) .more .skill-list {

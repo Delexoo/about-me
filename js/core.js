@@ -57,6 +57,7 @@ function inAbout(name) {
 }
 
 function mobileShowsDeck(name) {
-  return name === "home" || name === "socials";
+  // On phones Links is a centered icon grid — the project deck stays off-screen.
+  return name === "home";
 }
 

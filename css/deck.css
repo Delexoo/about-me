@@ -374,6 +374,8 @@ body.is-flipping .browser img { transition: none; }
   object-fit: cover;
   object-position: center 42%;
   background: #fafafa;
+  content-visibility: auto;
+  contain-intrinsic-size: 960px 600px;
 }
 
 .card.no-shot .browser { display: none; }
